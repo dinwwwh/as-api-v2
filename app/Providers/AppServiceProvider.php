@@ -29,21 +29,27 @@ class AppServiceProvider extends ServiceProvider
         Model::preventLazyLoading(!app()->isProduction());
 
         // Helper to convert keys of array to 'camelCase'
-        Arr::macro('camel', function (array $arr): array {
+        Arr::macro('camel', function (array $arr, int $depth = 1): array {
+            if ($depth == 0) return $arr;
             $camelArr = [];
             foreach ($arr as $key => $value) {
-                $camelArr[Str::camel($key)] = $value;
+                $camelArr[Str::camel($key)] = is_array($value)
+                    ? static::camel($value, $depth - 1)
+                    : $value;
             }
             return $camelArr;
         });
 
         // Helper to convert keys of array to 'snack_case'
-        Arr::macro('snake', function (array $arr): array {
-            $camelArr = [];
+        Arr::macro('snake', function (array $arr, int $depth = 1): array {
+            if ($depth == 0) return $arr;
+            $snakeArr = [];
             foreach ($arr as $key => $value) {
-                $camelArr[Str::snake($key)] = $value;
+                $snakeArr[Str::snake($key)] = is_array($value)
+                    ? static::snake($value, $depth - 1)
+                    : $value;
             }
-            return $camelArr;
+            return $snakeArr;
         });
     }
 }
