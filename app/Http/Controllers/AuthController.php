@@ -4,11 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\RegisterRequest;
 use App\Http\Requests\UpdateProfileRequest;
+use App\Http\Resources\UserResource;
 use App\Models\User;
 use DB;
 use Hash;
 use Illuminate\Auth\Events\PasswordReset;
-use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Http\Request;
 use Password;
 use Storage;
@@ -42,7 +42,7 @@ class AuthController extends Controller
         }
 
         auth()->login($user);
-        return auth()->user();
+        return new UserResource(auth()->user());
     }
 
     /**
@@ -60,12 +60,12 @@ class AuthController extends Controller
         $credentials = $request->only('email', 'password', 'login');
 
         if (auth()->attempt($credentials, $request->remember)) {
-            return auth()->user();
+            return new UserResource(auth()->user());
         }
 
         return response([
             'message' => 'Login failed.',
-        ], 401);
+        ], 400);
     }
 
     /**
@@ -75,7 +75,7 @@ class AuthController extends Controller
      */
     public function readProfile()
     {
-        return auth()->user();
+        return new UserResource(auth()->user());
     }
 
     /**
@@ -147,7 +147,7 @@ class AuthController extends Controller
         auth()->user()->update([
             'password' => Hash::make($request->newPassword)
         ]);
-        return auth()->user();
+        return response()->json(['message' => 'Updated password successfully.']);
     }
 
     /**

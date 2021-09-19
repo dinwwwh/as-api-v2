@@ -19,9 +19,8 @@ class ProfileTest extends TestCase
             ->assertStatus(200)
             ->assertJson(
                 fn (AssertableJson $json) => $json
-                    ->where('id', $user->getKey())
-                    ->where('login', $user->login)
-                    ->etc()
+                    ->where('data.id', $user->getKey())
+                    ->where('data.login', $user->login)
             );
     }
 }
