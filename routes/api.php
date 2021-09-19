@@ -18,12 +18,34 @@ use Illuminate\Support\Facades\Route;
 // Auth routes
 // ====================================================
 
+Route::post('register', [AuthController::class, 'register'])
+    ->middleware(['guest'])
+    ->name('register');
+
 Route::post('login', [AuthController::class, 'login'])
-    ->middleware('guest')
+    ->middleware(['guest'])
     ->name('login');
+
 Route::get('profile', [AuthController::class, 'readProfile'])
-    ->middleware('auth')
+    ->middleware(['auth'])
     ->name('profile');
+
 Route::post('logout', [AuthController::class, 'logout'])
-    ->middleware('auth')
+    ->middleware(['auth'])
     ->name('logout');
+
+Route::patch('update-profile', [AuthController::class, 'updateProfile'])
+    ->middleware(['auth'])
+    ->name('profile.update');
+
+Route::patch('update-password', [AuthController::class, 'updatePassword'])
+    ->middleware(['auth'])
+    ->name('password.update');
+
+Route::post('forgot-password', [AuthController::class, 'forgotPassword'])
+    ->middleware(['guest'])
+    ->name('password.email');
+
+Route::post('reset-password', [AuthController::class, 'resetPassword'])
+    ->middleware(['guest'])
+    ->name('password.reset');
