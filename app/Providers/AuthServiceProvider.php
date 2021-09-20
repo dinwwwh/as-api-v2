@@ -31,36 +31,5 @@ class AuthServiceProvider extends ServiceProvider
         ResetPassword::createUrlUsing(function ($user, string $token) {
             return env('APP_BASE_RESET_PASSWORD_URL', env('APP_URL') . '/reset-password') . '?token=' . $token;
         });
-
-        // Determine whether current auth has a given permission
-        Auth::macro('hasPermission', function (string $permissionKey): bool {
-            if (!$this->check()) return false;
-            if (
-                $this->user()->permissions()->where('key', $permissionKey)->first(['key'])
-            ) return true;
-            if (
-                $this->user()->roles()->whereRelation('permissions', 'key', $permissionKey)->first(['key'])
-            ) return true;
-
-            return false;
-        });
-
-        // Determine whether current auth has all permissions
-        Auth::macro('hasAllPermissions', function (string|array $permissionKeys): bool {
-            if (!$this->check()) return false;
-            foreach ((array)$permissionKeys as $permissionKey) {
-                if (!$this->hasPermission($permissionKey)) return false;
-            }
-            return true;
-        });
-
-        // Determine whether current auth has any permissions
-        Auth::macro('hasAnyPermissions', function (string|array $permissionKeys): bool {
-            if (!$this->check()) return false;
-            foreach ((array)$permissionKeys as $permissionKey) {
-                if ($this->hasPermission($permissionKey)) return true;
-            }
-            return false;
-        });
     }
 }
