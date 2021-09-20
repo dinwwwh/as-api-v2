@@ -24,6 +24,7 @@ There are special params you can put it in body to receive special attributes.
 - `_specialAttributes` assign boolean value to determine whether special attributes of model will be send with response.
 - `_abilities` assign boolean value to determine whether attributes about abilities of current auth can do what will be send with response.
 - `_relationships` assign array|string like first argument of `with`, `load`, `loadMissing` to load relationship of main model to send with response.
+- `_perPage` assign int to denote numbers of model per page and required paginate for request.
   
 ## For production
 
