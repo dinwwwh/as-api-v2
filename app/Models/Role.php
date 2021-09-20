@@ -16,7 +16,7 @@ class Role extends Model
     public  $incrementing = false;
 
     protected  $touches = [];
-    protected  $fillable = [];
+    protected  $fillable = ['key', 'name', 'description', 'color'];
     protected  $hidden = [];
     protected  $casts = [];
     protected  $with = [];

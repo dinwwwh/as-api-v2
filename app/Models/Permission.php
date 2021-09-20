@@ -16,7 +16,7 @@ class Permission extends Model
     public  $incrementing = false;
 
     protected  $touches = [];
-    protected  $fillable = [];
+    protected  $fillable = ['key', 'name', 'description'];
     protected  $hidden = [];
     protected  $casts = [];
     protected  $with = [];
