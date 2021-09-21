@@ -11,9 +11,9 @@ trait Loggable
      * Write log to database
      *
      */
-    public function log(string $message, string $type = 'info', ?array $hiddenData = null)
+    public function log(string $message, string $type = 'info', ?array $hiddenData = null): Log
     {
-        $this->logs()->create([
+        return $this->logs()->create([
             'message' => $message,
             'type' => $type,
             'hidden_data' => $hiddenData
