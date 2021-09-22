@@ -11,7 +11,7 @@ trait Rulable
      * Convert all rules of this model to laravel rules used in validation
      *
      */
-    public function toValidatableRules(): array
+    public function getValidatableRules(): array
     {
         return $this->rules->pluck('key')->toArray();
     }
