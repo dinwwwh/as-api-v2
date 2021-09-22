@@ -25,10 +25,8 @@ class SettingProvider extends ServiceProvider
     public function boot()
     {
         rescue(function () {
-            $assignedConfigs = Setting::all()
-                ->filter(function (Setting $setting) {
-                    return !is_null($setting->assigned_config_key);
-                })
+            $assignedConfigs = Setting::whereNotNull('assigned_config_key')
+                ->get()
                 ->pluck('value', 'assigned_config_key')
                 ->toArray();
 
