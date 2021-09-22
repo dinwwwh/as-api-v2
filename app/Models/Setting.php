@@ -19,7 +19,10 @@ class Setting extends Model
         'description', 'public', 'rules',
     ];
     protected  $hidden = [];
-    protected  $casts = [];
+    protected  $casts = [
+        'value' => 'array',
+        'rules' => 'array',
+    ];
     protected  $with = [];
     protected  $withCount = [];
 }
