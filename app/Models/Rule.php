@@ -1,0 +1,23 @@
+<?php
+
+namespace App\Models;
+
+use App\Traits\CreatorAndUpdater;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+
+class Rule extends Model
+{
+    use HasFactory, CreatorAndUpdater;
+
+    protected  $primaryKey = 'key';
+    protected  $keyType = 'string';
+    public  $incrementing = false;
+
+    protected  $touches = [];
+    protected  $fillable = ['key', 'name', 'description'];
+    protected  $hidden = [];
+    protected  $casts = [];
+    protected  $with = [];
+    protected  $withCount = [];
+}
