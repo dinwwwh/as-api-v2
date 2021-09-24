@@ -28,9 +28,8 @@ class RechargedCardFactory extends Factory
             'code' => Str::random(),
             'telco' => 'viettel',
             'face_value' => Arr::random([10000, 20000, 50000, 100000, 200000, 500000]),
-            // 'real_face_value' => ,
-            // 'received_value' => ,
-            'status' => 1,
+            'real_face_value' => null,
+            'received_value' => null,
             'description' => $this->faker->sentence(),
         ];
     }

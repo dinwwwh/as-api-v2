@@ -2,84 +2,88 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\RechargedCard\EndApprovingRequest;
+use App\Http\Requests\RechargedCard\RechargeRequest;
+use App\Http\Requests\RechargedCard\StartApprovingRequest;
+use App\Http\Resources\RechargedCardResource;
 use App\Models\RechargedCard;
+use DB;
 use Illuminate\Http\Request;
 
 class RechargedCardController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Handle recharge card.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function recharge(RechargeRequest $request)
     {
-        //
+        try {
+            DB::beginTransaction();
+
+            $rechargedCard = RechargedCard::create([
+                'telco' => $request->telco,
+                'face_value' => $request->faceValue,
+                'serial' => $request->serial,
+                'code' => $request->code,
+            ]);
+
+            DB::commit();
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            throw $th;
+        }
+
+        return new RechargedCardResource($rechargedCard);
     }
 
     /**
-     * Show the form for creating a new resource.
+     * Handle start approving.
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function startApproving(StartApprovingRequest $request, RechargedCard $rechargedCard)
     {
-        //
+        try {
+            DB::beginTransaction();
+            $rechargedCard->update([
+                'approver_id' => auth()->user()->getKey(),
+            ]);
+            DB::commit();
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            throw $th;
+        }
+
+        return response()->json([
+            'message' => 'Start approving successfully.'
+        ], 200);
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Handle End approving.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function endApproving(EndApprovingRequest $request, RechargedCard $rechargedCard)
     {
-        //
-    }
+        try {
+            DB::beginTransaction();
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\RechargedCard  $rechargedCard
-     * @return \Illuminate\Http\Response
-     */
-    public function show(RechargedCard $rechargedCard)
-    {
-        //
-    }
+            $rechargedCard->update([
+                'real_face_value' => $request->realFaceValue,
+                'received_value' => $request->receivedValue,
+            ]);
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\RechargedCard  $rechargedCard
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(RechargedCard $rechargedCard)
-    {
-        //
-    }
+            DB::commit();
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            throw $th;
+        }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\RechargedCard  $rechargedCard
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, RechargedCard $rechargedCard)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\RechargedCard  $rechargedCard
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(RechargedCard $rechargedCard)
-    {
-        //
+        return response()->json([
+            'message' => 'End approving successfully.'
+        ], 200);
     }
 }

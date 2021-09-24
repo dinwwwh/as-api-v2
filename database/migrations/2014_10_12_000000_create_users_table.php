@@ -15,6 +15,7 @@ class CreateUsersTable extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('balance')->default(0);
             $table->string('name');
             $table->enum('gender', ['male', 'female', 'other']);
             $table->string('avatar_path');

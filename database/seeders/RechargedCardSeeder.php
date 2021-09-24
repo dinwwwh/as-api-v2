@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Permission;
 use App\Models\Setting;
 use Illuminate\Database\Seeder;
 
@@ -72,6 +73,16 @@ class RechargedCardSeeder extends Seeder
                 '*.faceValues.*.tax' => ['required', 'integer', 'min:0', 'max:100'],
                 '*.faceValues.*.taxForInvalidFaceValue' => ['required', 'integer', 'min:0', 'max:100'],
             ],
+        ]);
+
+        Permission::firstOrCreate(['key' => 'approve_recharged_card'], [
+            'name' => 'phê duyệt thẻ cào nạp thủ công',
+            'description' => 'Quyết định xem người dùng có thể phê duyệt các thẻ nạp bằng hình thức thủ công.',
+        ]);
+
+        Permission::firstOrCreate(['key' => 'manage_recharged_card'], [
+            'name' => 'quản lý thẻ cào nạp thủ công',
+            'description' => 'Quyết định xem người dùng có thể xem thông tin nhạy cảm của tất cả các thẻ, phê duyệt các thẻ mà người khác đang phê duyệt (nếu có quyền phê duyệt).',
         ]);
     }
 }

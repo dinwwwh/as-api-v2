@@ -21,12 +21,13 @@ class CreateRechargedCardsTable extends Migration
             $table->integer('face_value');
             $table->integer('real_face_value')->nullable();
             $table->integer('received_value')->nullable();
-            $table->unsignedInteger('status');
             $table->string('description')->nullable();
 
             $table->foreignId('approver_id')->nullable()->constrained('users', 'id')->onDelete('set null');
             $table->foreignId('creator_id')->nullable()->constrained('users', 'id')->onDelete('set null');
             $table->foreignId('updater_id')->nullable()->constrained('users', 'id')->onDelete('set null');
+
+            $table->timestamp('paid_at')->nullable(); // paid time to user create card
             $table->timestamps();
         });
     }

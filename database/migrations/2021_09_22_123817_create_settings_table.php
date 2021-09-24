@@ -19,7 +19,7 @@ class CreateSettingsTable extends Migration
             $table->string('assigned_config_key')->nullable(); // null => this setting not assign to any configs
 
             $table->json('rules')->nullable(); // Contain rules for validating this setting
-            $table->string('structure_description')->nullable();
+            $table->text('structure_description')->nullable();
             $table->string('description')->nullable();
             $table->boolean('public')->default(false);
 
