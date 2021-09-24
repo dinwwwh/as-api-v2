@@ -24,7 +24,10 @@ class RechargedCardResource extends JsonResource
 
             $this->mergeWhen(
                 auth()->check() && request('_abilities'),
-                fn () => [],
+                fn () => [
+                    'canStartApproving' => auth()->user()->can('startApproving', $this->resource),
+                    'canEndApproving' => auth()->user()->can('endApproving', $this->resource),
+                ],
             ),
         ]);
     }
