@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\SettingResource;
 use App\Models\Setting;
 use Illuminate\Http\Request;
 
@@ -15,6 +16,26 @@ class SettingController extends Controller
     public function index()
     {
         //
+    }
+
+    /**
+     * Get public settings
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function getPublicSettings(Request $request)
+    {
+        if ($request->_perPage) {
+            $settings = Setting::where('public', true)
+                ->with($request->_relationships)
+                ->paginate($request->_perPage);
+        } else {
+            $settings = Setting::where('public', true)
+                ->with($request->_relationships)
+                ->get();
+        }
+
+        return SettingResource::collection($settings);
     }
 
     /**

@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\RechargedCardController;
+use App\Http\Controllers\SettingController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -50,6 +51,17 @@ Route::post('forgot-password', [AuthController::class, 'forgotPassword'])
 Route::post('reset-password', [AuthController::class, 'resetPassword'])
     ->middleware(['guest'])
     ->name('password.reset');
+
+// ====================================================
+// Setting routes
+// ====================================================
+
+Route::prefix('settings')->group(function () {
+    Route::get('public', [SettingController::class, 'getPublicSettings'])
+        ->name('settings.public');
+});
+
+
 
 // ====================================================
 // Recharged card routes

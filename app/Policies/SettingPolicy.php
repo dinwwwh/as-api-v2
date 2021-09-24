@@ -34,6 +34,18 @@ class SettingPolicy
     }
 
     /**
+     * Determine whether user can read value attribute
+     *
+     * @return \Illuminate\Auth\Access\Response|bool
+     */
+    public function readValue(User $user, Setting $setting)
+    {
+        if ($setting->public) return true;
+
+        return $user->hasPermission('update_setting');
+    }
+
+    /**
      * Determine whether the user can create models.
      *
      * @param  \App\Models\User  $user
@@ -53,7 +65,7 @@ class SettingPolicy
      */
     public function update(User $user, Setting $setting)
     {
-        //
+        return $user->hasPermission('update_setting');
     }
 
     /**

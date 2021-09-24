@@ -18,7 +18,7 @@ class Setting extends Model
         'key', 'value', 'assigned_config_key', 'structure_description',
         'description', 'public', 'rules',
     ];
-    protected  $hidden = [];
+    protected  $hidden = ['value'];
     protected  $casts = [
         'value' => 'array',
         'rules' => 'array',
