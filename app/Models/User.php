@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Traits\CreatorAndUpdater;
+use App\Traits\Loggable;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -12,10 +13,11 @@ use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable, CreatorAndUpdater;
+    use HasApiTokens, HasFactory, Notifiable, CreatorAndUpdater, Loggable;
 
     protected $fillable = [
         'name',
+        'balance',
         'gender',
         'login',
         'avatar_path',
@@ -83,5 +85,22 @@ class User extends Authenticatable
             if ($this->hasPermission($permissionKey)) return true;
         }
         return false;
+    }
+
+    /**
+     * Handle update balance of user
+     *
+     */
+    public function updateBalance(int $amount, string $message): bool
+    {
+        $this->log($message, hiddenData: [
+            'updatingBalance' => $this->balance,
+            'updatedBalance' => $this->balance + $amount,
+            'amount' => $amount,
+        ]);
+
+        return $this->update([
+            'balance' => $this->balance + $amount,
+        ]);
     }
 }

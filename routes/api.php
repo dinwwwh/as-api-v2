@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\RechargedCardController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -49,3 +50,22 @@ Route::post('forgot-password', [AuthController::class, 'forgotPassword'])
 Route::post('reset-password', [AuthController::class, 'resetPassword'])
     ->middleware(['guest'])
     ->name('password.reset');
+
+// ====================================================
+// Recharged card routes
+// ====================================================
+
+Route::prefix('recharged-cards')->group(function () {
+    Route::post('recharge', [RechargedCardController::class, 'recharge'])
+        ->middleware(['auth', 'verified'])
+        ->name('rechargedCards.recharge');
+
+    Route::prefix('{rechargedCard}')->group(function () {
+        Route::patch('start-approving', [RechargedCardController::class, 'startApproving'])
+            ->middleware(['auth', 'verified', 'can:startApproving,rechargedCard'])
+            ->name('rechargedCards.startApproving');
+        Route::patch('end-approving', [RechargedCardController::class, 'endApproving'])
+            ->middleware(['auth', 'verified', 'can:endApproving,rechargedCard'])
+            ->name('rechargedCards.endApproving');
+    });
+});

@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateSettingsTable extends Migration
+class CreateRechargedCardsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,18 +13,21 @@ class CreateSettingsTable extends Migration
      */
     public function up()
     {
-        Schema::create('settings', function (Blueprint $table) {
-            $table->uuid('key')->primary();
-            $table->json('value')->nullable();
-            $table->string('assigned_config_key')->nullable(); // null => this setting not assign to any configs
-
-            $table->json('rules')->nullable(); // Contain rules for validating this setting
-            $table->text('structure_description')->nullable();
+        Schema::create('recharged_cards', function (Blueprint $table) {
+            $table->id();
+            $table->string('serial');
+            $table->string('code');
+            $table->string('telco');
+            $table->integer('face_value');
+            $table->integer('real_face_value')->nullable();
+            $table->integer('received_value')->nullable();
             $table->string('description')->nullable();
-            $table->boolean('public')->default(false);
 
+            $table->foreignId('approver_id')->nullable()->constrained('users', 'id')->onDelete('set null');
             $table->foreignId('creator_id')->nullable()->constrained('users', 'id')->onDelete('set null');
             $table->foreignId('updater_id')->nullable()->constrained('users', 'id')->onDelete('set null');
+
+            $table->timestamp('paid_at')->nullable(); // paid time to user create card
             $table->timestamps();
         });
     }
@@ -36,6 +39,6 @@ class CreateSettingsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('settings');
+        Schema::dropIfExists('recharged_cards');
     }
 }

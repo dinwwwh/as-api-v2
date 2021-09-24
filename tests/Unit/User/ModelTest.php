@@ -5,6 +5,8 @@ namespace Tests\Unit\User;
 use App\Models\Permission;
 use App\Models\Role;
 use App\Models\User;
+use Arr;
+use Str;
 use Tests\TestCase;
 
 class ModelTest extends TestCase
@@ -59,5 +61,32 @@ class ModelTest extends TestCase
 
         $user->permissions()->attach($permission2);
         $this->assertTrue($user->hasAnyPermissions([$permission1->getKey(), $permission2->getKey()]));
+    }
+
+    public function test_updateBalance_method()
+    {
+        $user = User::factory()->state([
+            'balance' => 20000,
+        ])->create();
+
+        $user->updateBalance(-20000, $message = Str::random());
+
+        $this->assertEquals(0, $user->refresh()->balance);
+        $this->assertDatabaseHas('logs', [
+            'message' => $message,
+            'type' => 'info',
+            'loggable_id' => $user->getKey(),
+            'loggable_type' => $user::class,
+        ]);
+
+        $user->updateBalance(10000, $message = Str::random());
+        $this->assertEquals(10000, $user->refresh()->balance);
+
+        $this->assertDatabaseHas('logs', [
+            'message' => $message,
+            'type' => 'info',
+            'loggable_id' => $user->getKey(),
+            'loggable_type' => $user::class,
+        ]);
     }
 }

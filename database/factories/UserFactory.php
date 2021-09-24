@@ -29,6 +29,7 @@ class UserFactory extends Factory
 
         return [
             'name' => $name,
+            'balance' => rand(10000, 500000),
             'login' => Str::random(),
             'gender' => $gender,
             'avatar_path' => "https://avatars.dicebear.com/api/$sprite/$name.svg",
