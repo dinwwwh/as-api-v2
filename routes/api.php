@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\RechargedCardController;
 use App\Http\Controllers\SettingController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -61,6 +62,15 @@ Route::prefix('settings')->group(function () {
         ->name('settings.public');
 });
 
+
+// ====================================================
+// User routes
+// ====================================================
+
+Route::prefix('users')->group(function () {
+    Route::get('find-strictly', [UserController::class, 'findStrictly'])
+        ->name('users.findStrictly');
+});
 
 
 // ====================================================
