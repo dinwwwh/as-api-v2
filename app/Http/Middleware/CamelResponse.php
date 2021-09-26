@@ -18,12 +18,15 @@ class CamelResponse
         $response = $next($request);
 
         if ($response instanceof JsonResponse) {
-            $response->setData(
-                Arr::camel(
-                    json_decode($response->content(), true),
-                    2
-                )
-            );
+            $data = json_decode($response->content(), true);
+            if (is_array($data)) {
+                $response->setData(
+                    Arr::camel(
+                        $data,
+                        2
+                    )
+                );
+            }
         }
 
         return $response;
