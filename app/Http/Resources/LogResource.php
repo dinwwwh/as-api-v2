@@ -28,7 +28,7 @@ class LogResource extends JsonResource
             ),
 
             $this->mergeWhen(
-                auth()->check() && request('_sensitiveAttributes'),
+                auth()->check() && request('_sensitive'),
                 fn () => [
                     'hiddenData' => auth()->user()->can('readHiddenData', $this->resource) ? $this->hidden_data : null
                 ],

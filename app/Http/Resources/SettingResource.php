@@ -16,7 +16,7 @@ class SettingResource extends JsonResource
     {
         return array_merge(parent::toArray($request), [
             $this->mergeWhen(
-                auth()->check() && request('_sensitiveAttributes'),
+                auth()->check() && request('_sensitive'),
                 fn () => [
                     'value' => auth()->user()->can('readValue', $this->resource) ? $this->value : null,
                 ],

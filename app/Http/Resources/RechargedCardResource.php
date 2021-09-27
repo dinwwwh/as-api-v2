@@ -16,7 +16,7 @@ class RechargedCardResource extends JsonResource
     {
         return array_merge(parent::toArray($request), [
             $this->mergeWhen(
-                auth()->check() && request('_sensitiveAttributes'),
+                auth()->check() && request('_sensitive'),
                 fn () => [
                     'code' => auth()->user()->can('readCode', $this->resource) ? $this->code : 0,
                 ],

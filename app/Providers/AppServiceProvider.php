@@ -5,6 +5,7 @@ namespace App\Providers;
 use Arr;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\ServiceProvider;
+use Storage;
 use Str;
 
 class AppServiceProvider extends ServiceProvider
@@ -50,6 +51,11 @@ class AppServiceProvider extends ServiceProvider
                     : $value;
             }
             return $snakeArr;
+        });
+
+        Storage::macro('urlSmartly', function (string $url): string {
+            if (Str::startsWith($url, ['https://', 'http://'])) return $url;
+            return config('app.url') . $this->url($url);
         });
     }
 }

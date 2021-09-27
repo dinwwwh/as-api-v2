@@ -21,8 +21,8 @@ There are some suggests when set up env to develop this project.
 
 There are special params you can put it in body to receive special attributes.
 
-- `_specialAttributes` assign boolean value to determine whether special attributes of model will be send with response.
-- `_sensitiveAttributes` assign boolean to send sensitive attributes with request.
+- `_computed` assign boolean value to determine whether computed attributes of model will be send with response.
+- `_sensitive` assign boolean to send sensitive attributes with request.
 - `_abilities` assign boolean value to determine whether attributes about abilities of current auth can do what will be send with response.
 - `_relationships` assign array|string like first argument of `with`, `load`, `loadMissing` to load relationship of main model to send with response.
 - `_perPage` assign int to denote numbers of model per page and required paginate for request.
