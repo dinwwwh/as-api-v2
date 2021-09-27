@@ -27,11 +27,11 @@ class SettingController extends Controller
     {
         if ($request->_perPage) {
             $settings = Setting::where('public', true)
-                ->with($request->_relationships)
+                ->with($request->_relationships ?? [])
                 ->paginate($request->_perPage);
         } else {
             $settings = Setting::where('public', true)
-                ->with($request->_relationships)
+                ->with($request->_relationships ?? [])
                 ->get();
         }
 
