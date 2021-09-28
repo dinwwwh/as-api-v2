@@ -23,7 +23,7 @@ class CamelResponse
                 $response->setData(
                     Arr::camel(
                         $data,
-                        2
+                        is_array($data['data'] ?? null) ? 3 : 2,
                     )
                 );
             }
