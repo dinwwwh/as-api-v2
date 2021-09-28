@@ -36,6 +36,16 @@ class RechargedCardPolicy
     }
 
     /**
+     * Determine whether user can manage models
+     *
+     * @return \Illuminate\Auth\Access\Response|bool
+     */
+    public function manage(User $user)
+    {
+        return $user->hasPermission('manage_recharged_card');
+    }
+
+    /**
      * Determine whether user can read code attribute of model
      *
      * @return \Illuminate\Auth\Access\Response|bool
@@ -50,7 +60,7 @@ class RechargedCardPolicy
             && is_null($rechargedCard->real_face_value)
         ) return true;
 
-        if ($user->hasPermission('manage_recharged_card')) return true;
+        if ($this->manage($user)) return true;
 
         return false;
     }

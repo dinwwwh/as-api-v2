@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Models\RechargedCard;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Storage;
 
@@ -33,7 +34,10 @@ class UserResource extends JsonResource
 
             $this->mergeWhen(
                 auth()->check() && request('_abilities'),
-                fn () => [],
+                fn () => [
+                    'canManageRechargedCard' => auth()->user()->can('manage', RechargedCard::class),
+                    'canApproveRechargedCard' => auth()->user()->hasPermission('approve_recharged_card'),
+                ],
             ),
         ]);
     }

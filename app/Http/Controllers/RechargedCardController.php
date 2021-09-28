@@ -12,6 +12,99 @@ use Illuminate\Http\Request;
 
 class RechargedCardController extends Controller
 {
+
+    /**
+     * Get recharged cards
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function index(Request $request)
+    {
+        if ($request->_perPage) {
+            $rechargedCards = RechargedCard::orderBy('id', 'desc')
+                ->with($request->_relationships ?? [])
+                ->paginate($request->_perPage);
+        } else {
+            $rechargedCards = RechargedCard::orderBy('id', 'desc')
+                ->with($request->_relationships ?? [])
+                ->get();
+        }
+
+        return RechargedCardResource::collection($rechargedCards);
+    }
+
+    /**
+     * Get pending approver recharged cards
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function getPending(Request $request)
+    {
+        if ($request->_perPage) {
+            $rechargedCards = RechargedCard::whereNull('approver_id')
+                ->whereNull('real_face_value')
+                ->whereNull('received_value')
+                ->with($request->_relationships ?? [])
+                ->paginate($request->_perPage);
+        } else {
+            $rechargedCards = RechargedCard::whereNull('approver_id')
+                ->whereNull('real_face_value')
+                ->whereNull('received_value')
+                ->with($request->_relationships ?? [])
+                ->get();
+        }
+
+        return RechargedCardResource::collection($rechargedCards);
+    }
+
+    /**
+     * Get approving recharged cards
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function getApproving(Request $request)
+    {
+        if ($request->_perPage) {
+            $rechargedCards = RechargedCard::whereNotNull('approver_id')
+                ->whereNull('real_face_value')
+                ->whereNull('received_value')
+                ->with($request->_relationships ?? [])
+                ->paginate($request->_perPage);
+        } else {
+            $rechargedCards = RechargedCard::whereNotNull('approver_id')
+                ->whereNull('real_face_value')
+                ->whereNull('received_value')
+                ->with($request->_relationships ?? [])
+                ->get();
+        }
+
+        return RechargedCardResource::collection($rechargedCards);
+    }
+
+    /**
+     * Get approving recharged cards by me
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function getApprovingByMe(Request $request)
+    {
+        if ($request->_perPage) {
+            $rechargedCards = RechargedCard::where('approver_id', auth()->user()->getKey())
+                ->whereNull('real_face_value')
+                ->whereNull('received_value')
+                ->with($request->_relationships ?? [])
+                ->paginate($request->_perPage);
+        } else {
+            $rechargedCards = RechargedCard::where('approver_id', auth()->user()->getKey())
+                ->whereNull('real_face_value')
+                ->whereNull('received_value')
+                ->with($request->_relationships ?? [])
+                ->get();
+        }
+
+        return RechargedCardResource::collection($rechargedCards);
+    }
+
     /**
      * Handle recharge card.
      *

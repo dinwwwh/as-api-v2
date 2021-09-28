@@ -82,6 +82,19 @@ Route::prefix('recharged-cards')->group(function () {
         ->middleware(['auth', 'verified'])
         ->name('rechargedCards.recharge');
 
+    Route::get('', [RechargedCardController::class, 'index'])
+        ->name('rechargedCards.index');
+
+    Route::get('pending', [RechargedCardController::class, 'getPending'])
+        ->name('rechargedCards.getPending');
+
+    Route::get('approving', [RechargedCardController::class, 'getApproving'])
+        ->name('rechargedCards.getApproving');
+
+    Route::get('approving-by-me', [RechargedCardController::class, 'getApprovingByMe'])
+        ->middleware(['auth', 'verified'])
+        ->name('rechargedCards.getApprovingByMe');
+
     Route::prefix('{rechargedCard}')->group(function () {
         Route::patch('start-approving', [RechargedCardController::class, 'startApproving'])
             ->middleware(['auth', 'verified', 'can:startApproving,rechargedCard'])
