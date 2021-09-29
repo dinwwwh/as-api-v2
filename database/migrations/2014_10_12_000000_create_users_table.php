@@ -29,6 +29,14 @@ class CreateUsersTable extends Migration
             $table->rememberToken();
             $table->timestamps();
         });
+
+        Schema::create('userables', function (Blueprint $table) {
+            $table->foreignId('user_id')->constrained('users', 'id')->onDelete('cascade');
+            $table->morphs('userable');
+            $table->timestamps();
+
+            $table->primary(['user_id', 'userable_id', 'userable_type']);
+        });
     }
 
     /**
@@ -38,6 +46,7 @@ class CreateUsersTable extends Migration
      */
     public function down()
     {
+        Schema::dropIfExists('userables');
         Schema::dropIfExists('users');
     }
 }

@@ -39,6 +39,14 @@ class CreateRolesTable extends Migration
 
             $table->primary(['role_key', 'user_id']);
         });
+
+        Schema::create('rolables', function (Blueprint $table) {
+            $table->foreignUuid('role_key')->constrained('roles', 'key')->onDelete('cascade');
+            $table->morphs('rolable');
+            $table->timestamps();
+
+            $table->primary(['role_key', 'rolable_id', 'rolable_type']);
+        });
     }
 
     /**
@@ -48,6 +56,7 @@ class CreateRolesTable extends Migration
      */
     public function down()
     {
+        Schema::dropIfExists('rolables');
         Schema::dropIfExists('role_user');
         Schema::dropIfExists('permission_role');
         Schema::dropIfExists('roles');
