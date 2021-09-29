@@ -96,6 +96,8 @@ Route::prefix('recharged-cards')->group(function () {
         ->name('rechargedCards.getApprovingByMe');
 
     Route::prefix('{rechargedCard}')->group(function () {
+        Route::get('', [RechargedCardController::class, 'show'])
+            ->name('rechargedCards.show');
         Route::patch('start-approving', [RechargedCardController::class, 'startApproving'])
             ->middleware(['auth', 'verified', 'can:startApproving,rechargedCard'])
             ->name('rechargedCards.startApproving');

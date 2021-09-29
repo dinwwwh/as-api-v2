@@ -15,6 +15,9 @@ class RechargedCardResource extends JsonResource
     public function toArray($request)
     {
         return array_merge(parent::toArray($request), [
+            'creator' => new UserResource($this->whenLoaded('creator')),
+            'approver' => new UserResource($this->whenLoaded('approver')),
+
             $this->mergeWhen(
                 auth()->check() && request('_sensitive'),
                 fn () => [

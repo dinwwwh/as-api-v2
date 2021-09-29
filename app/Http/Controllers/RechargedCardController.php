@@ -128,6 +128,21 @@ class RechargedCardController extends Controller
             throw $th;
         }
 
+        return new RechargedCardResource(
+            $rechargedCard
+                ->refresh()
+                ->load($request->_relationships ?? [])
+        );
+    }
+
+    /**
+     * Get recharged card
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function show(Request $request, RechargedCard $rechargedCard)
+    {
+        $rechargedCard->load($request->_relationships ?? []);
         return new RechargedCardResource($rechargedCard);
     }
 
@@ -149,9 +164,7 @@ class RechargedCardController extends Controller
             throw $th;
         }
 
-        return response()->json([
-            'message' => 'Start approving successfully.'
-        ], 200);
+        return new RechargedCardResource($rechargedCard->load($request->_relationships ?? []));
     }
 
     /**
@@ -175,8 +188,6 @@ class RechargedCardController extends Controller
             throw $th;
         }
 
-        return response()->json([
-            'message' => 'End approving successfully.'
-        ], 200);
+        return new RechargedCardResource($rechargedCard->load($request->_relationships ?? []));
     }
 }
