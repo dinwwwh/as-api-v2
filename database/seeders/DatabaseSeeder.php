@@ -18,6 +18,7 @@ class DatabaseSeeder extends Seeder
         $this->call(LogSeeder::class);
         $this->call(RuleSeeder::class);
         $this->call(RechargedCardSeeder::class);
+        $this->call(AccountTypeSeeder::class);
 
         $this->call(PermissionSeeder::class);
         $this->call(RoleSeeder::class);

@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Models\AccountType;
 use App\Models\RechargedCard;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Storage;
@@ -37,6 +38,8 @@ class UserResource extends JsonResource
                 fn () => [
                     'canManageRechargedCard' => auth()->user()->can('manage', RechargedCard::class),
                     'canApproveRechargedCard' => auth()->user()->hasPermission('approve_recharged_card'),
+                    'canManageAccountType' => auth()->user()->can('manage', AccountType::class),
+                    'canCreateAccountType' => auth()->user()->can('create', AccountType::class),
                 ],
             ),
         ]);

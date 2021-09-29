@@ -1,9 +1,11 @@
 <?php
 
+use App\Http\Controllers\AccountTypeController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\RechargedCardController;
 use App\Http\Controllers\SettingController;
 use App\Http\Controllers\UserController;
+use App\Models\AccountType;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -104,5 +106,24 @@ Route::prefix('recharged-cards')->group(function () {
         Route::patch('end-approving', [RechargedCardController::class, 'endApproving'])
             ->middleware(['auth', 'verified', 'can:endApproving,rechargedCard'])
             ->name('rechargedCards.endApproving');
+    });
+});
+
+// ====================================================
+// Account type routes
+// ====================================================
+
+Route::prefix('account-types')->group(function () {
+    Route::post('', [AccountTypeController::class, 'create'])
+        ->middleware(['auth', 'verified', 'can:create,' . AccountType::class])
+        ->name('accountTypes.create');
+
+    Route::prefix('{accountType}')->group(function () {
+        Route::get('', [AccountTypeController::class, 'show'])
+            ->name('accountTypes.show');
+
+        Route::put('', [AccountTypeController::class, 'update'])
+            ->middleware(['auth', 'verified', 'can:update,accountType'])
+            ->name('accountTypes.update');
     });
 });
