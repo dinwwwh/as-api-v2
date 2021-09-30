@@ -24,6 +24,27 @@ class UserController extends Controller
     }
 
     /**
+     * Find users by compare like strictly.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function searchStrictly(Request $request)
+    {
+        $users = User::where('id', $request->_search)
+            ->orWhere('email', 'like', '%' . $request->_search . '%')
+            ->orWhere('login', 'like', '%' . $request->_search . '%')
+            ->orWhere('name', 'like', '%' . $request->_search . '%');
+
+        if ($request->_perPage) {
+            $users = $users->paginate($request->_perPage);
+        } else {
+            $users = $users->get();
+        }
+
+        return UserResource::collection($users->load($request->_relationships ?? []));
+    }
+
+    /**
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request

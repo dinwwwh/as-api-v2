@@ -73,6 +73,8 @@ Route::prefix('settings')->group(function () {
 Route::prefix('users')->group(function () {
     Route::get('find-strictly', [UserController::class, 'findStrictly'])
         ->name('users.findStrictly');
+    Route::get('search-strictly', [UserController::class, 'searchStrictly'])
+        ->name('users.searchStrictly');
 });
 
 // ====================================================
