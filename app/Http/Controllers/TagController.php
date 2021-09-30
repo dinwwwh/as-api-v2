@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\TagResource;
 use App\Models\Tag;
 use Illuminate\Http\Request;
 
@@ -12,9 +13,21 @@ class TagController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        if ($request->_search) {
+            $tags = Tag::search($request->_search);
+        } else {
+            $tags = Tag::orderBy('updated_at', 'desc');
+        }
+
+        if ($request->_perPage) {
+            $tags =  $tags->paginate($request->_perPage);
+        } else {
+            $tags = $tags->get();
+        }
+
+        return TagResource::collection($tags->load($request->_relationships ?? []));
     }
 
     /**

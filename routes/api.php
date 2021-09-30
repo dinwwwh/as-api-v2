@@ -4,6 +4,7 @@ use App\Http\Controllers\AccountTypeController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\RechargedCardController;
 use App\Http\Controllers\SettingController;
+use App\Http\Controllers\TagController;
 use App\Http\Controllers\UserController;
 use App\Models\AccountType;
 use Illuminate\Support\Facades\Route;
@@ -74,6 +75,14 @@ Route::prefix('users')->group(function () {
         ->name('users.findStrictly');
 });
 
+// ====================================================
+// Tag routes
+// ====================================================
+
+Route::prefix('tags')->group(function () {
+    Route::get('', [TagController::class, 'index'])
+        ->name('tags.index');
+});
 
 // ====================================================
 // Recharged card routes
