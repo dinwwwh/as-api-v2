@@ -25,8 +25,9 @@ trait Taggable
      * SYNC tags rapidly for model
      *
      */
-    public function tag(array $tags, ?int $type = null): array
+    public function tag(array $tagNames, ?int $type = null): array
     {
+        $tags = array_map(fn ($tagName) => ['name' => $tagName], $tagNames);
         return $this->tags()->sync(Tag::firstOrCreateMany($tags, $type));
     }
 

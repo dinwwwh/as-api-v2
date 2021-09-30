@@ -21,16 +21,7 @@ class UpdateTest extends TestCase
         $data = [
             'name' => Str::random(),
             'description' => Str::random(),
-            'tags' => [
-                [
-                    'name' => Str::random(),
-                    'description' => Str::random(),
-                ],
-                [
-                    'name' => Str::random(),
-                    'description' => Str::random(),
-                ],
-            ],
+            'tagNames' => [Str::random(), Str::random()],
             'userIds' => User::inRandomOrder()->limit(5)->pluck('id')->toArray(),
         ];
 
@@ -45,7 +36,7 @@ class UpdateTest extends TestCase
         ]);
 
         $this->assertEquals(count($data['userIds']), $accountType->users()->count());
-        $this->assertEquals(count($data['tags']), $accountType->tags()->count());
+        $this->assertEquals(count($data['tagNames']), $accountType->tags()->count());
         $this->assertEquals(1, $accountType->logs()->count());
     }
 

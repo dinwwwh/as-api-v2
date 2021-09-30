@@ -17,6 +17,11 @@ class AccountTypeResource extends JsonResource
         return array_merge(parent::toArray($request), [
             'creator' => new UserResource($this->whenLoaded('creator')),
             'updater' => new UserResource($this->whenLoaded('updater')),
+            'users' => UserResource::collection($this->whenLoaded('users')),
+
+            'tags' =>  TagResource::collection($this->whenLoaded('tags')),
+
+            'logs' =>  LogResource::collection($this->whenLoaded('logs')),
 
             $this->mergeWhen(
                 auth()->check() && request('_abilities'),

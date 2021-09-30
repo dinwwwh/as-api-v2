@@ -26,9 +26,10 @@ class CreateAccountTypeRequest extends FormRequest
         return [
             'name' => ['required', 'string'],
             'description' => ['nullable', 'string'],
-            'tags' => ['required', 'array', 'min:1'],
-            'tags.*.name' => ['required', 'string'],
-            'tags.*.description' => ['nullable', 'string'],
+
+            'tagNames' => ['required', 'array', 'min:1'],
+            'tagNames.*' => ['string'],
+
             'userIds' => ['required', 'array', 'min:1'],
             'userIds.*' => ['integer', 'exists:users,id'],
         ];

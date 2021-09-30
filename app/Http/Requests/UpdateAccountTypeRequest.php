@@ -26,10 +26,9 @@ class UpdateAccountTypeRequest extends FormRequest
         return [
             'name' => ['string'],
             'description' => ['nullable', 'string'],
-            'tags' => ['array', 'min:1'],
 
-            'tags.*.name' => ['string'],
-            'tags.*.description' => ['nullable', 'string'],
+            'tagNames' => ['array', 'min:1'],
+            'tagNames.*' => ['string'],
 
             'userIds' => ['array', 'min:1'],
             'userIds.*' => ['integer', 'exists:users,id'],
