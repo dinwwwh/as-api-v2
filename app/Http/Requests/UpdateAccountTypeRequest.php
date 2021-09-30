@@ -27,11 +27,14 @@ class UpdateAccountTypeRequest extends FormRequest
             'name' => ['string'],
             'description' => ['nullable', 'string'],
 
-            'tagNames' => ['array', 'min:1'],
-            'tagNames.*' => ['string'],
+            'tags' => ['array', 'min:1'],
+            'tags.*' => ['array'],
+            'tags.*.name' => ['required', 'string'],
+            'tags.*.description' => ['nullable', 'string'],
 
-            'userIds' => ['array', 'min:1'],
-            'userIds.*' => ['integer', 'exists:users,id'],
+            'users' => ['array', 'min:1'],
+            'users.*' => ['array'],
+            'users.*.id' => ['required', 'integer', 'exists:users,id']
         ];
     }
 }

@@ -22,6 +22,15 @@ trait Userable
     }
 
     /**
+     * Handle sync users relationship quickly
+     *
+     */
+    public function user(array $users): array
+    {
+        return $this->users()->sync(array_map(fn ($user) => $user['id'], $users));
+    }
+
+    /**
      * Get users of model
      *
      */

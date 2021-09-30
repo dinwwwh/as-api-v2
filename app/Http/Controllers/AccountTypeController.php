@@ -33,8 +33,8 @@ class AccountTypeController extends Controller
 
             $accountType = AccountType::create($request->only('name', 'description'));
             $accountType->log('đã tạo kiểu tài khoản này.');
-            $accountType->tag($request->tagNames);
-            $accountType->users()->attach($request->userIds);
+            $accountType->tag($request->tags);
+            $accountType->user($request->users);
 
             DB::commit();
         } catch (\Throwable $th) {
@@ -68,8 +68,8 @@ class AccountTypeController extends Controller
 
             $accountType->update($request->only('name', 'description'));
             $accountType->log('đã cập nhật thông tin');
-            if ($request->tagNames) $accountType->tag($request->tagNames);
-            if ($request->userIds) $accountType->users()->sync($request->userIds);
+            if ($request->tags) $accountType->tag($request->tags);
+            if ($request->users) $accountType->user($request->users);
 
             DB::commit();
         } catch (\Throwable $th) {

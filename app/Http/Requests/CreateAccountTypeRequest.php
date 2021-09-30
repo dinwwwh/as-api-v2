@@ -27,11 +27,14 @@ class CreateAccountTypeRequest extends FormRequest
             'name' => ['required', 'string'],
             'description' => ['nullable', 'string'],
 
-            'tagNames' => ['required', 'array', 'min:1'],
-            'tagNames.*' => ['string'],
+            'tags' => ['required', 'array', 'min:1'],
+            'tags.*' => ['array'],
+            'tags.*.name' => ['required', 'string'],
+            'tags.*.description' => ['nullable', 'string'],
 
-            'userIds' => ['required', 'array', 'min:1'],
-            'userIds.*' => ['integer', 'exists:users,id'],
+            'users' => ['required', 'array', 'min:1'],
+            'users.*' => ['array'],
+            'users.*.id' => ['required', 'integer', 'exists:users,id']
         ];
     }
 }
