@@ -42,7 +42,7 @@ class AuthController extends Controller
         }
 
         auth()->login($user);
-        return new UserResource(auth()->user());
+        return UserResource::withLoad(auth()->user());
     }
 
     /**
@@ -60,7 +60,7 @@ class AuthController extends Controller
         $credentials = $request->only('email', 'password', 'login');
 
         if (auth()->attempt($credentials, $request->remember)) {
-            return new UserResource(auth()->user());
+            return UserResource::withLoad(auth()->user());
         }
 
         return response([
@@ -75,7 +75,7 @@ class AuthController extends Controller
      */
     public function readProfile()
     {
-        return new UserResource(auth()->user());
+        return UserResource::withLoad(auth()->user());
     }
 
     /**
@@ -123,7 +123,7 @@ class AuthController extends Controller
             throw $th;
         }
 
-        return response()->json(['message' => 'Updated profile successfully.']);
+        return UserResource::withLoad(auth()->user());
     }
 
     /**
@@ -147,7 +147,7 @@ class AuthController extends Controller
         auth()->user()->update([
             'password' => Hash::make($request->newPassword)
         ]);
-        return response()->json(['message' => 'Updated password successfully.']);
+        return UserResource::withLoad(auth()->user());
     }
 
     /**

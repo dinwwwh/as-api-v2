@@ -4,11 +4,14 @@ namespace App\Http\Resources;
 
 use App\Models\AccountType;
 use App\Models\RechargedCard;
+use App\Traits\WithLoad;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Storage;
 
 class UserResource extends JsonResource
 {
+    use WithLoad;
+
     /**
      * Transform the resource into an array.
      *

@@ -22,15 +22,13 @@ class RechargedCardController extends Controller
     {
         if ($request->_perPage) {
             $rechargedCards = RechargedCard::orderBy('id', 'desc')
-                ->with($request->_relationships ?? [])
                 ->paginate($request->_perPage);
         } else {
             $rechargedCards = RechargedCard::orderBy('id', 'desc')
-                ->with($request->_relationships ?? [])
                 ->get();
         }
 
-        return RechargedCardResource::collection($rechargedCards);
+        return RechargedCardResource::withLoad($rechargedCards);
     }
 
     /**
@@ -44,17 +42,15 @@ class RechargedCardController extends Controller
             $rechargedCards = RechargedCard::whereNull('approver_id')
                 ->whereNull('real_face_value')
                 ->whereNull('received_value')
-                ->with($request->_relationships ?? [])
                 ->paginate($request->_perPage);
         } else {
             $rechargedCards = RechargedCard::whereNull('approver_id')
                 ->whereNull('real_face_value')
                 ->whereNull('received_value')
-                ->with($request->_relationships ?? [])
                 ->get();
         }
 
-        return RechargedCardResource::collection($rechargedCards);
+        return RechargedCardResource::withLoad($rechargedCards);
     }
 
     /**
@@ -68,17 +64,15 @@ class RechargedCardController extends Controller
             $rechargedCards = RechargedCard::whereNotNull('approver_id')
                 ->whereNull('real_face_value')
                 ->whereNull('received_value')
-                ->with($request->_relationships ?? [])
                 ->paginate($request->_perPage);
         } else {
             $rechargedCards = RechargedCard::whereNotNull('approver_id')
                 ->whereNull('real_face_value')
                 ->whereNull('received_value')
-                ->with($request->_relationships ?? [])
                 ->get();
         }
 
-        return RechargedCardResource::collection($rechargedCards);
+        return RechargedCardResource::withLoad($rechargedCards);
     }
 
     /**
@@ -92,17 +86,15 @@ class RechargedCardController extends Controller
             $rechargedCards = RechargedCard::where('approver_id', auth()->user()->getKey())
                 ->whereNull('real_face_value')
                 ->whereNull('received_value')
-                ->with($request->_relationships ?? [])
                 ->paginate($request->_perPage);
         } else {
             $rechargedCards = RechargedCard::where('approver_id', auth()->user()->getKey())
                 ->whereNull('real_face_value')
                 ->whereNull('received_value')
-                ->with($request->_relationships ?? [])
                 ->get();
         }
 
-        return RechargedCardResource::collection($rechargedCards);
+        return RechargedCardResource::withLoad($rechargedCards);
     }
 
     /**
@@ -128,11 +120,7 @@ class RechargedCardController extends Controller
             throw $th;
         }
 
-        return new RechargedCardResource(
-            $rechargedCard
-                ->refresh()
-                ->load($request->_relationships ?? [])
-        );
+        return RechargedCardResource::withLoad($rechargedCard->refresh());
     }
 
     /**
@@ -140,10 +128,9 @@ class RechargedCardController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function show(Request $request, RechargedCard $rechargedCard)
+    public function show(RechargedCard $rechargedCard)
     {
-        $rechargedCard->load($request->_relationships ?? []);
-        return new RechargedCardResource($rechargedCard);
+        return RechargedCardResource::withLoad($rechargedCard);
     }
 
     /**
@@ -164,7 +151,7 @@ class RechargedCardController extends Controller
             throw $th;
         }
 
-        return new RechargedCardResource($rechargedCard->load($request->_relationships ?? []));
+        return RechargedCardResource::withLoad($rechargedCard);
     }
 
     /**
@@ -188,6 +175,6 @@ class RechargedCardController extends Controller
             throw $th;
         }
 
-        return new RechargedCardResource($rechargedCard->load($request->_relationships ?? []));
+        return RechargedCardResource::withLoad($rechargedCard);
     }
 }

@@ -7,7 +7,6 @@ use App\Http\Requests\UpdateAccountTypeRequest;
 use App\Http\Resources\AccountTypeResource;
 use App\Models\AccountType;
 use DB;
-use Illuminate\Http\Request;
 
 class AccountTypeController extends Controller
 {
@@ -42,7 +41,7 @@ class AccountTypeController extends Controller
             throw $th;
         }
 
-        return new AccountTypeResource($accountType->load($request->_relationships ?? []));
+        return AccountTypeResource::withLoad($accountType);
     }
 
     /**
@@ -51,9 +50,9 @@ class AccountTypeController extends Controller
      * @param  \App\Models\AccountType  $accountType
      * @return \Illuminate\Http\Response
      */
-    public function show(Request $request, AccountType $accountType)
+    public function show(AccountType $accountType)
     {
-        return new AccountTypeResource($accountType->load($request->_relationships ?? []));
+        return AccountTypeResource::withLoad($accountType);
     }
 
     /**
@@ -77,7 +76,7 @@ class AccountTypeController extends Controller
             throw $th;
         }
 
-        return new AccountTypeResource($accountType->load($request->_relationships ?? []));
+        return AccountTypeResource::withLoad($accountType);
     }
 
     /**

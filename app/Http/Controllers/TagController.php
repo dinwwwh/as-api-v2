@@ -27,7 +27,7 @@ class TagController extends Controller
             $tags = $tags->get();
         }
 
-        return TagResource::collection($tags->load($request->_relationships ?? []));
+        return TagResource::withLoad($tags);
     }
 
     /**

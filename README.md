@@ -22,6 +22,7 @@ There are some suggests when set up env to develop this project.
 There are special params you can put it in body to receive special attributes.
 
 - `_computed` assign boolean value to determine whether computed attributes of model will be send with response.
+- `_counts` assign array contain relationships will count there.
 - `_sensitive` assign boolean to send sensitive attributes with request.
 - `_abilities` assign boolean value to determine whether attributes about abilities of current auth can do what will be send with response.
 - `_relationships` assign array|string like first argument of `with`, `load`, `loadMissing` to load relationship of main model to send with response.

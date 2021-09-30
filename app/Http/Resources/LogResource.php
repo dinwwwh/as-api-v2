@@ -2,10 +2,13 @@
 
 namespace App\Http\Resources;
 
+use App\Traits\WithLoad;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class LogResource extends JsonResource
 {
+    use WithLoad;
+
     /**
      * Transform the resource into an array.
      *

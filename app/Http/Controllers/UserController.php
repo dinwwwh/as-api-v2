@@ -20,7 +20,7 @@ class UserController extends Controller
             ->orWhere('login', $request->_search)
             ->first();
 
-        return new UserResource($user);
+        return UserResource::withLoad($user);
     }
 
     /**
@@ -41,7 +41,7 @@ class UserController extends Controller
             $users = $users->get();
         }
 
-        return UserResource::collection($users->load($request->_relationships ?? []));
+        return UserResource::withLoad($users);
     }
 
     /**
