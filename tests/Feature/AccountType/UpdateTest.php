@@ -3,6 +3,7 @@
 namespace Tests\Feature\AccountType;
 
 use App\Models\AccountType;
+use App\Models\Tag;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -21,8 +22,8 @@ class UpdateTest extends TestCase
         $data = [
             'name' => Str::random(),
             'description' => Str::random(),
-            'tagNames' => [Str::random(), Str::random()],
-            'userIds' => User::inRandomOrder()->limit(5)->pluck('id')->toArray(),
+            'tags' => Tag::factory()->count(5)->make()->toArray(),
+            'users' => User::inRandomOrder()->limit(5)->get()->toArray(),
         ];
 
         $this->actingAs($user)
@@ -35,8 +36,8 @@ class UpdateTest extends TestCase
             'description' => $data['description'],
         ]);
 
-        $this->assertEquals(count($data['userIds']), $accountType->users()->count());
-        $this->assertEquals(count($data['tagNames']), $accountType->tags()->count());
+        $this->assertEquals(count($data['users']), $accountType->users()->count());
+        $this->assertEquals(count($data['tags']), $accountType->tags()->count());
         $this->assertEquals(1, $accountType->logs()->count());
     }
 
