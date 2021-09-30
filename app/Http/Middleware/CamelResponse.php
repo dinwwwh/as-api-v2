@@ -23,7 +23,7 @@ class CamelResponse
                 $response->setData(
                     Arr::camel(
                         $data,
-                        is_array($data['data'] ?? null) ? 3 : 2,
+                        -1, //Drawback If in data has un camel case it can't differentiate them
                     )
                 );
             }
