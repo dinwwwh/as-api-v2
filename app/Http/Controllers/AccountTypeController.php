@@ -21,6 +21,25 @@ class AccountTypeController extends Controller
     }
 
     /**
+     * Get account types created by auth
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function getCreatedByMe()
+    {
+        $accountTypes = AccountType::where('creator_id', auth()->user()->getKey())
+            ->orderBy('id', 'desc');
+
+        if (request('_perPage')) {
+            $accountTypes = $accountTypes->paginate(request('_perPage'));
+        } else {
+            $accountTypes = $accountTypes->get();
+        }
+
+        return AccountTypeResource::withLoad($accountTypes);
+    }
+
+    /**
      * Show the form for creating a new resource.
      *
      * @return \Illuminate\Http\Response
