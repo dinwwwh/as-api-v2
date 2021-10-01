@@ -1,11 +1,13 @@
 <?php
 
+use App\Http\Controllers\AccountInfoController;
 use App\Http\Controllers\AccountTypeController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\RechargedCardController;
 use App\Http\Controllers\SettingController;
 use App\Http\Controllers\TagController;
 use App\Http\Controllers\UserController;
+use App\Models\AccountInfo;
 use App\Models\AccountType;
 use Illuminate\Support\Facades\Route;
 
@@ -140,5 +142,25 @@ Route::prefix('account-types')->group(function () {
         Route::put('', [AccountTypeController::class, 'update'])
             ->middleware(['auth', 'verified', 'can:update,accountType'])
             ->name('accountTypes.update');
+
+        Route::prefix('account-infos')->group(function () {
+            Route::post('', [AccountInfoController::class, 'create'])
+                ->middleware(['auth', 'verified', 'can:create,' . AccountInfo::class . ',accountType'])
+                ->name('accountInfos.create');
+        });
+    });
+});
+
+// ====================================================
+// Account type routes
+// ====================================================
+
+Route::prefix('account-infos')->group(function () {
+    Route::prefix('{accountInfo}')->group(function () {
+        Route::get('', [AccountInfoController::class, 'show'])
+            ->name('accountInfos.show');
+        Route::put('', [AccountInfoController::class, 'update'])
+            ->middleware(['auth', 'verified', 'can:update,accountInfo'])
+            ->name('accountInfos.update');;
     });
 });

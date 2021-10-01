@@ -22,6 +22,15 @@ trait Rulable
     }
 
     /**
+     * Handle sync rule relationships easily
+     *
+     */
+    public function rule(array $rules)
+    {
+        return $this->rules()->sync(array_map(fn ($rule) => $rule['key'], $rules));
+    }
+
+    /**
      * Convert all rules of this model to laravel rules used in validation
      *
      */
