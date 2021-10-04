@@ -29,7 +29,8 @@ trait Filable
      */
     public function files(): MorphMany
     {
-        return $this->morphMany(File::class, 'filable');
+        return $this->morphMany(File::class, 'filable')
+            ->orderBy('order');
     }
 
     /**
