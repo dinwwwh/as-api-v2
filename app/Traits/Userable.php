@@ -46,6 +46,6 @@ trait Userable
     public function hasUser(User|int $user): bool
     {
         $userId = is_int($user) ? $user : $user->getKey();
-        return !is_null($this->users()->where('id', $userId)->get());
+        return !is_null($this->users()->where('id', $userId)->first(['id']));
     }
 }
