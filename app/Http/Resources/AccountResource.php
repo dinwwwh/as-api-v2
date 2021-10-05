@@ -2,12 +2,10 @@
 
 namespace App\Http\Resources;
 
-use App\Models\Account;
-use App\Models\AccountInfo;
 use App\Traits\WithLoad;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class AccountTypeResource extends JsonResource
+class AccountResource extends JsonResource
 {
     use WithLoad;
 
@@ -22,21 +20,25 @@ class AccountTypeResource extends JsonResource
         return array_merge(parent::toArray($request), [
             'creator' => new UserResource($this->whenLoaded('creator')),
             'updater' => new UserResource($this->whenLoaded('updater')),
-            'users' => UserResource::collection($this->whenLoaded('users')),
 
-            'tags' =>  TagResource::collection($this->whenLoaded('tags')),
+            'accountType' => new AccountTypeResource($this->whenLoaded('accountType')),
 
-            'logs' =>  LogResource::collection($this->whenLoaded('logs')),
+            'images' => FileResource::collection($this->whenLoaded('images')),
+            'mainImage' => new FileResource($this->whenLoaded('mainImage')),
 
-            'accountInfos' => AccountInfoResource::collection($this->whenLoaded('accountInfos')),
+            'tags' => TagResource::collection($this->whenLoaded('tags')),
+
+            $this->mergeWhen(
+                auth()->check() && request('_sensitive'),
+                fn () => [
+                    'cost' => auth()->user()->can('readCost', $this->resource) ? $this->resource->cost : null,
+                ],
+            ),
 
             $this->mergeWhen(
                 auth()->check() && request('_abilities'),
                 fn () => [
                     'canUpdate' => auth()->user()->can('update', $this->resource),
-                    'canDelete' => auth()->user()->can('delete', $this->resource),
-                    'canCreateAccountInfo' => auth()->user()->can('create', [AccountInfo::class, $this->resource]),
-                    'canCreateAccount' => auth()->user()->can('create', [Account::class, $this->resource]),
                 ],
             ),
         ]);

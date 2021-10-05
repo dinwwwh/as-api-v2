@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AccountController;
 use App\Http\Controllers\AccountInfoController;
 use App\Http\Controllers\AccountTypeController;
 use App\Http\Controllers\AuthController;
@@ -7,6 +8,7 @@ use App\Http\Controllers\RechargedCardController;
 use App\Http\Controllers\SettingController;
 use App\Http\Controllers\TagController;
 use App\Http\Controllers\UserController;
+use App\Models\Account;
 use App\Models\AccountInfo;
 use App\Models\AccountType;
 use Illuminate\Support\Facades\Route;
@@ -148,6 +150,12 @@ Route::prefix('account-types')->group(function () {
                 ->middleware(['auth', 'verified', 'can:create,' . AccountInfo::class . ',accountType'])
                 ->name('accountInfos.create');
         });
+
+        Route::prefix('accounts')->group(function () {
+            Route::post('', [AccountController::class, 'create'])
+                ->middleware(['auth', 'verified', 'can:create,' . Account::class . ',accountType'])
+                ->name('accounts.create');
+        });
     });
 });
 
@@ -162,5 +170,30 @@ Route::prefix('account-infos')->group(function () {
         Route::put('', [AccountInfoController::class, 'update'])
             ->middleware(['auth', 'verified', 'can:update,accountInfo'])
             ->name('accountInfos.update');;
+    });
+});
+
+// ====================================================
+// Account route
+// ====================================================
+
+Route::prefix('accounts')->group(function () {
+
+    Route::get('created-by-me', [AccountController::class, 'getCreatedByMe'])
+        ->middleware(['auth', 'verified'])
+        ->name('accounts.getCreatedByMe');
+
+    Route::prefix('{account}')->group(function () {
+        Route::get('', [AccountController::class, 'show'])
+            ->name('accounts.show');
+        Route::put('', [AccountController::class, 'update'])
+            ->middleware(['auth', 'verified', 'can:update,account'])
+            ->name('accounts.update');
+        Route::patch('buy', [AccountController::class, 'buy'])
+            ->middleware(['auth', 'verified', 'can:buy,account'])
+            ->name('accounts.buy');
+        Route::patch('confirm', [AccountController::class, 'confirm'])
+            ->middleware(['auth', 'verified', 'can:confirm,account'])
+            ->name('accounts.confirm');
     });
 });
