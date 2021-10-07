@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Actions\CreateAccountInfo;
+use App\Http\Requests\CreateAccountInfoRequest;
+use App\Http\Requests\UpdateAccountInfoRequest;
 use App\Http\Resources\AccountInfoResource;
 use App\Models\AccountInfo;
 use App\Models\AccountType;
+use Arr;
 use DB;
 use Illuminate\Http\Request;
 
@@ -26,12 +28,12 @@ class AccountInfoController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create(Request $request, AccountType $accountType)
+    public function create(CreateAccountInfoRequest $request, AccountType $accountType)
     {
         try {
             DB::beginTransaction();
 
-            $data = $request->all();
+            $data = Arr::snake($request->only(['name', 'description', 'canCreator', 'canBuyer', 'canBuyerOke']));
             $data['account_type_id'] = $accountType->getKey();
             $accountInfo = AccountInfo::create($data);
             if ($request->rules) $accountInfo->rule($request->rules);
@@ -60,12 +62,13 @@ class AccountInfoController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, AccountInfo $accountInfo)
+    public function update(UpdateAccountInfoRequest $request, AccountInfo $accountInfo)
     {
         try {
             DB::beginTransaction();
 
-            $accountInfo->update($request->all());
+            $data = Arr::snake($request->only(['name', 'description', 'canCreator', 'canBuyer', 'canBuyerOke']));
+            $accountInfo->update($data);
             if (is_array($request->rules)) $accountInfo->rule($request->rules);
 
             DB::commit();

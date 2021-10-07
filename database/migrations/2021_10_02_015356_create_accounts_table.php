@@ -36,6 +36,13 @@ class CreateAccountsTable extends Migration
             $table->foreignId('updater_id')->nullable()->constrained('users', 'id')->onDelete('set null');
             $table->timestamps();
         });
+
+        Schema::create('account_account_info', function (Blueprint $table) {
+            $table->foreignId('account_id')->constrained('accounts', 'id')->onDelete('cascade');
+            $table->foreignId('account_info_id')->constrained('account_infos', 'id')->onDelete('cascade');
+            $table->string('value')->nullable();
+            $table->timestamps();
+        });
     }
 
     /**
@@ -45,6 +52,7 @@ class CreateAccountsTable extends Migration
      */
     public function down()
     {
+        Schema::dropIfExists('account_account_info');
         Schema::dropIfExists('accounts');
     }
 }

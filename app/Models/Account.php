@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Pivot\AccountAccountInfo;
 use App\Traits\CreatorAndUpdater;
 use App\Traits\Filable;
 use App\Traits\Loggable;
@@ -10,6 +11,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Laravel\Scout\Searchable;
 
 class Account extends Model
@@ -44,6 +46,41 @@ class Account extends Model
     protected  $withCount = [];
 
     /**
+     * Determine whether this account is selling
+     *
+     */
+    public function isSelling(): bool
+    {
+        return is_null($this->bought_at);
+    }
+
+    /**
+     * Determine whether this account is bought
+     * and pending confirming
+     *
+     */
+    public function isBought(): bool
+    {
+        return !is_null($this->bought_at)
+            && !is_null($this->confirmed_at)
+            && now()->gte($this->bought_at)
+            && now()->lte($this->confirmed_at);
+    }
+
+    /**
+     * Determine whether this account is bought
+     * and confirmed oke
+     *
+     */
+    public function isBoughtOke(): bool
+    {
+        return !is_null($this->bought_at)
+            && !is_null($this->confirmed_at)
+            && now()->gte($this->bought_at)
+            && now()->gte($this->confirmed_at);
+    }
+
+    /**
      * Get data use for search `laravel-scout`
      *
      */
@@ -60,6 +97,63 @@ class Account extends Model
     public function accountType(): BelongsTo
     {
         return $this->belongsTo(AccountType::class);
+    }
+
+    /**
+     * Get account infos of this model
+     *
+     */
+    public function infos(): BelongsToMany
+    {
+        return $this->belongsToMany(AccountInfo::class)
+            ->withPivot(['value'])
+            ->using(AccountAccountInfo::class)
+            ->withTimestamps();
+    }
+
+    /**
+     * Get account infos of this model
+     * That creator can read and update
+     * When account selling
+     *
+     */
+    public function creatorInfos(): BelongsToMany
+    {
+        return $this->belongsToMany(AccountInfo::class)
+            ->where('can_creator', true)
+            ->withPivot(['value'])
+            ->using(AccountAccountInfo::class)
+            ->withTimestamps();
+    }
+
+    /**
+     * Get account infos of this model
+     * That buyer can read
+     * When account bought and pending confirming
+     *
+     */
+    public function buyerInfos(): BelongsToMany
+    {
+        return $this->belongsToMany(AccountInfo::class)
+            ->where('can_buyer', true)
+            ->withPivot(['value'])
+            ->using(AccountAccountInfo::class)
+            ->withTimestamps();
+    }
+
+    /**
+     * Get account infos of this model
+     * That buyer can read
+     * When account bought and confirmed account oke
+     *
+     */
+    public function buyerOkeInfos(): BelongsToMany
+    {
+        return $this->belongsToMany(AccountInfo::class)
+            ->where('can_buyer_oke', true)
+            ->withPivot(['value'])
+            ->using(AccountAccountInfo::class)
+            ->withTimestamps();
     }
 
     /**

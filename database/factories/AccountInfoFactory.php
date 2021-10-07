@@ -26,6 +26,9 @@ class AccountInfoFactory extends Factory
             'name' => $this->faker->name(),
             'description' => $this->faker->sentence(12),
             'account_type_id' => AccountType::factory(),
+            'can_creator' => true,
+            'can_buyer' => true,
+            'can_buyer_oke' => true,
         ];
     }
 }

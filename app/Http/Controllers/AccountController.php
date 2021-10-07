@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\Account\ConfirmRequest;
 use App\Http\Requests\Account\CreateRequest;
+use App\Http\Requests\Account\UpdateRequest;
 use App\Http\Resources\AccountResource;
 use App\Models\Account;
 use App\Models\AccountType;
@@ -20,7 +21,19 @@ class AccountController extends Controller
      */
     public function index()
     {
-        //
+        if (request('_search')) {
+            $accounts = Account::search();
+        } else {
+            $accounts = Account::orderBy('id', 'desc');
+        }
+
+        if (request('_perPage')) {
+            $accounts = $accounts->paginate(request('_perPage'));
+        } else {
+            $accounts = $accounts->get();
+        }
+
+        return AccountResource::withLoad($accounts);
     }
 
     /**
@@ -62,6 +75,12 @@ class AccountController extends Controller
 
             $account = $account->create($data);
             $account->tag($request->tags);
+
+            $syncCreatorInfos = [];
+            foreach ($request->creatorInfos as $creatorInfo) {
+                $syncCreatorInfos[$creatorInfo['id']] = ['value' => $creatorInfo['pivot']['value']];
+            }
+            $account->creatorInfos()->attach($syncCreatorInfos);
 
             foreach ($request->images as $order => $image) {
                 $account->images()->create([
@@ -151,7 +170,7 @@ class AccountController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Account $account)
+    public function update(UpdateRequest $request, Account $account)
     {
         try {
             DB::beginTransaction();
@@ -161,6 +180,14 @@ class AccountController extends Controller
 
             $account->update($data);
             if ($request->tags) $account->tag($request->tags);
+
+            if (is_array($request->creatorInfos)) {
+                $syncCreatorInfos = [];
+                foreach ($request->creatorInfos as $creatorInfo) {
+                    $syncCreatorInfos[$creatorInfo['id']] = ['value' => $creatorInfo['pivot']['value']];
+                }
+                $account->creatorInfos()->sync($syncCreatorInfos);
+            }
 
             if ($request->images) {
                 $oldImages = $account->images;

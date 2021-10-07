@@ -2,6 +2,8 @@
 
 namespace App\Http\Resources;
 
+use App\Http\Resources\Pivot\AccountAccountInfoResource;
+use App\Models\Pivot\AccountAccountInfo;
 use App\Traits\WithLoad;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -27,6 +29,20 @@ class AccountResource extends JsonResource
             'mainImage' => new FileResource($this->whenLoaded('mainImage')),
 
             'tags' => TagResource::collection($this->whenLoaded('tags')),
+
+            'infos' => AccountInfoResource::collection($this->whenLoaded('infos')),
+            'creatorInfos' => AccountInfoResource::collection($this->whenLoaded('creatorInfos')),
+            'buyerInfos' => AccountInfoResource::collection($this->whenLoaded('buyerInfos')),
+            'buyerOkeInfos' => AccountInfoResource::collection($this->whenLoaded('buyerOkeInfos')),
+
+            'pivot' => $this->when($this->pivot, function () {
+                switch (true) {
+                    case $this->pivot instanceof AccountAccountInfo:
+                        return new AccountAccountInfoResource($this->pivot);
+                    default:
+                        return $this->pivot;
+                }
+            }),
 
             $this->mergeWhen(
                 auth()->check() && request('_sensitive'),

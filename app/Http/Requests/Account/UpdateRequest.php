@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Account;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class UpdateRequest extends FormRequest
 {
@@ -23,6 +24,8 @@ class UpdateRequest extends FormRequest
      */
     public function rules()
     {
+        $accountType = $this->route('account')->accountType;
+
         return [
             'description' => ['nullable', 'string'],
             'cost' => ['nullable', 'integer'],
@@ -35,6 +38,19 @@ class UpdateRequest extends FormRequest
             'tags.*' => ['array'],
             'tags.*.name' => ['required', 'string'],
             'tags.*.description' => ['nullable', 'string'],
+
+            'creatorInfos' => ['array', 'min:' . $accountType->creatorAccountInfos()->count()],
+            'creatorInfos.*' => ['array'],
+            'creatorInfos.*.id' => [
+                'required',
+                'integer',
+                'distinct',
+                Rule::exists('account_infos', 'id')
+                    ->where('account_type_id', $accountType->getKey())
+                    ->where('can_creator', true)
+            ],
+            'creatorInfos.*.pivot' => ['required', 'array'],
+            'creatorInfos.*.pivot.value' => ['required', 'string'],
         ];
     }
 }

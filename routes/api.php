@@ -179,6 +179,9 @@ Route::prefix('account-infos')->group(function () {
 
 Route::prefix('accounts')->group(function () {
 
+    Route::get('', [AccountController::class, 'index'])
+        ->name('accounts.index');
+
     Route::get('created-by-me', [AccountController::class, 'getCreatedByMe'])
         ->middleware(['auth', 'verified'])
         ->name('accounts.getCreatedByMe');

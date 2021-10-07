@@ -26,6 +26,9 @@ class CreateAccountInfoRequest extends FormRequest
         return [
             'name' => ['required', 'string'],
             'description' => ['nullable', 'string'],
+            'canCreator' => ['boolean'],
+            'canBuyer' => ['boolean'],
+            'canBuyerOke' => ['boolean'],
 
             'rules' => ['array'],
             'rules.*' => ['array'],

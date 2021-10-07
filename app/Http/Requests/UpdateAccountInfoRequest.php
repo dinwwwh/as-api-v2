@@ -13,7 +13,7 @@ class UpdateAccountInfoRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return true;
     }
 
     /**
@@ -26,6 +26,9 @@ class UpdateAccountInfoRequest extends FormRequest
         return [
             'name' => ['string'],
             'description' => ['nullable', 'string'],
+            'canCreator' => ['boolean'],
+            'canBuyer' => ['boolean'],
+            'canBuyerOke' => ['boolean'],
 
             'rules' => ['array'],
             'rules.*' => ['array'],

@@ -2,6 +2,8 @@
 
 namespace App\Http\Resources;
 
+use App\Http\Resources\Pivot\AccountAccountInfoResource;
+use App\Models\Pivot\AccountAccountInfo;
 use App\Traits\WithLoad;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -22,6 +24,15 @@ class AccountInfoResource extends JsonResource
             'updater' => new UserResource($this->whenLoaded('updater')),
 
             'accountType' => new AccountTypeResource($this->whenLoaded('accountType')),
+
+            'pivot' => $this->when($this->pivot, function () {
+                switch (true) {
+                    case $this->pivot instanceof AccountAccountInfo:
+                        return new AccountAccountInfoResource($this->pivot);
+                    default:
+                        return $this->pivot;
+                }
+            }),
 
             $this->mergeWhen(
                 auth()->check() && request('_abilities'),
