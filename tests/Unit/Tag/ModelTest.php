@@ -36,4 +36,28 @@ class ModelTest extends TestCase
         $this->assertTrue($tag->is($checkedTags->first()));
         $this->assertEquals(Str::slug($UncreatedTagName), $checkedTags->last()->getKey());
     }
+
+    public function test_getRepresentation_method()
+    {
+        // 1 layer
+        $tag =  Tag::factory()->for(Tag::factory(), 'parent')->create();
+        $this->assertEquals($tag->parent->getKey(), $tag->getRepresentation()->getKey());
+
+        // 2 layers
+        $tag =  Tag::factory()
+            ->for(
+                Tag::factory()->for(Tag::factory(), 'parent'),
+                'parent'
+            )
+            ->create();
+        $this->assertEquals($tag->parent->parent->getKey(), $tag->getRepresentation()->getKey());
+
+        // Loop
+        $tag =  Tag::factory()
+            ->create();
+        $tag->update([
+            'parent_slug' => $tag->getKey(),
+        ]);
+        $this->assertEquals(null, $tag->getRepresentation());
+    }
 }

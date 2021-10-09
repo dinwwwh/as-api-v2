@@ -17,6 +17,14 @@ class TagResource extends JsonResource
      */
     public function toArray($request)
     {
-        return parent::toArray($request);
+        return array_merge(parent::toArray($request), [
+
+            $this->mergeWhen(
+                auth()->check() && request('_abilities'),
+                fn () => [
+                    'canUpdate' => auth()->user()->can('update', $this->resource),
+                ],
+            ),
+        ]);
     }
 }

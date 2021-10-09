@@ -2,9 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\CreateTagRequest;
+use App\Http\Requests\UpdateTagRequest;
 use App\Http\Resources\TagResource;
 use App\Models\Tag;
+use DB;
 use Illuminate\Http\Request;
+use Str;
 
 class TagController extends Controller
 {
@@ -35,63 +39,138 @@ class TagController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create(CreateTagRequest $request)
     {
-        //
-    }
+        try {
+            DB::beginTransaction();
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
+            $tag = Tag::create([
+                'slug' => Str::slug($request->name),
+                'name' => $request->name,
+                'description' => $request->description,
+                'parent_slug' => $request->parent
+                    ? Tag::find($request->parent['slug'])?->getRepresentation()?->getKey()
+                    : null,
+            ]);
+
+            DB::commit();
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            throw $th;
+        }
+
+        return TagResource::withLoad($tag);
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Tag  $tag
      * @return \Illuminate\Http\Response
      */
     public function show(Tag $tag)
     {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Tag  $tag
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Tag $tag)
-    {
-        //
+        return TagResource::withLoad($tag);
     }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Tag  $tag
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Tag $tag)
+    public function update(UpdateTagRequest $request, Tag $tag)
     {
-        //
+        try {
+            DB::beginTransaction();
+
+            if (
+                $request->parent &&
+                $parentTag = Tag::find($request->parent['slug'])?->getRepresentation()
+            ) {
+                $tag->update(['parent_slug' => $parentTag->getKey()]);
+            }
+
+            if ($request->slug && $request->slug != $tag->getKey()) {
+                $oldTag = $tag;
+                $tag = Tag::create(array_merge(
+                    $oldTag->getAttributes(),
+                    $request->only('name', 'slug', 'type', 'description'),
+                ));
+                $tag->created_at = $oldTag->created_at;
+                $tag->save();
+
+                DB::table('taggables')
+                    ->where('tag_slug', $oldTag->getKey())
+                    ->update([
+                        'tag_slug' => $tag->getKey(),
+                    ]);
+
+                $oldTag->delete();
+            } else {
+                $tag->update($request->only('type', 'description'));
+            }
+
+            DB::commit();
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            throw $th;
+        }
+
+        return TagResource::withLoad($tag);
+    }
+
+    /**
+     * Convert all relations of tag to another tag
+     *
+     */
+    public function migrate(Request $request,  Tag $tag, Tag $migratedTag)
+    {
+        // Find migrated tag has no parent
+        $migratedTag = $migratedTag->getRepresentation();
+        if (!$migratedTag) {
+            return abort(422, 'Migrated tag is invalid.');
+        }
+
+        // Migrated tag must differ tag
+        if ($migratedTag->getKey() == $tag->getKey())
+            return abort(422, 'Migrated tag is invalid.');
+
+        try {
+            DB::beginTransaction();
+
+            // Migrate
+            $amount = DB::table('taggables')
+                ->where('tag_slug', $tag->getKey())
+                ->update([
+                    'tag_slug' => $migratedTag->getKey()
+                ]);
+
+            // Migrate in future
+            if ($request->hasMigrateInFuture) {
+                $tag->update([
+                    'parent_slug' =>  $migratedTag->getKey(),
+                ]);
+            }
+
+            DB::commit();
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            throw $th;
+        }
+
+        return response()->json([
+            'message' => 'Migrate successfully',
+            'data' => [
+                'amount' => $amount,
+            ],
+        ], 200);
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Tag  $tag
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Tag $tag)
+    public function delete(Tag $tag)
     {
         //
     }

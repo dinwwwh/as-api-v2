@@ -4,6 +4,7 @@ namespace App\Http\Resources;
 
 use App\Models\AccountType;
 use App\Models\RechargedCard;
+use App\Models\Tag;
 use App\Traits\WithLoad;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Storage;
@@ -43,6 +44,8 @@ class UserResource extends JsonResource
                     'canApproveRechargedCard' => auth()->user()->hasPermission('approve_recharged_card'),
                     'canManageAccountType' => auth()->user()->can('manage', AccountType::class),
                     'canCreateAccountType' => auth()->user()->can('create', AccountType::class),
+                    'canManageTag' => auth()->user()->can('manage', Tag::class),
+                    'canCreateTag' => auth()->user()->can('create', Tag::class),
                 ],
             ),
         ]);

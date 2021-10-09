@@ -11,6 +11,7 @@ use App\Http\Controllers\UserController;
 use App\Models\Account;
 use App\Models\AccountInfo;
 use App\Models\AccountType;
+use App\Models\Tag;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -88,6 +89,21 @@ Route::prefix('users')->group(function () {
 Route::prefix('tags')->group(function () {
     Route::get('', [TagController::class, 'index'])
         ->name('tags.index');
+
+    Route::post('', [TagController::class, 'create'])
+        ->middleware(['auth', 'verified', 'can:create,' . Tag::class])
+        ->name('tags.create');
+
+    Route::prefix('{tag}')->group(function () {
+        Route::get('', [TagController::class, 'show'])
+            ->name('tags.show');
+        Route::put('', [TagController::class, 'update'])
+            ->middleware(['auth', 'verified', 'can:update,tag'])
+            ->name('tags.update');
+        Route::patch('migrate/{migratedTag}', [TagController::class, 'migrate'])
+            ->middleware(['auth', 'verified', 'can:update,tag'])
+            ->name('tags.migrate');
+    });
 });
 
 // ====================================================
