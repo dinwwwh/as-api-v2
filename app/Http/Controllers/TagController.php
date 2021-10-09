@@ -59,7 +59,7 @@ class TagController extends Controller
             throw $th;
         }
 
-        return TagResource::withLoad($tag);
+        return TagResource::withLoad($tag->refresh());
     }
 
     /**
