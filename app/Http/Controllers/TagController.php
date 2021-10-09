@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use App\Http\Requests\CreateTagRequest;
 use App\Http\Requests\IndexTagRequest;
 use App\Http\Requests\UpdateTagRequest;
+use App\Http\Resources\AccountResource;
 use App\Http\Resources\TagResource;
+use App\Models\Account;
 use App\Models\Tag;
 use DB;
 use Illuminate\Http\Request;
@@ -37,6 +39,31 @@ class TagController extends Controller
         }
 
         return TagResource::withLoad($tags);
+    }
+
+    /**
+     * Get accounts by tag
+     *
+     */
+    public function getSellingAccountsByTag(Tag $tag)
+    {
+        $accountTypeIds = $tag->accountTypes->pluck('id')->toArray();
+
+        if (request('_search')) {
+            $accounts = Account::search(request('_search'));
+        } else {
+            $accounts = Account::orderBy('id', 'desc');
+        }
+
+        $accounts->whereIn('account_type_id', $accountTypeIds);
+
+        if (request('_perPage')) {
+            $accounts =  $accounts->paginate(request('_perPage'));
+        } else {
+            $accounts = $accounts->get();
+        }
+
+        return AccountResource::withLoad($accounts);
     }
 
     /**

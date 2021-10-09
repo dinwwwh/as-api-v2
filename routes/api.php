@@ -103,6 +103,8 @@ Route::prefix('tags')->group(function () {
         Route::patch('migrate/{migratedTag}', [TagController::class, 'migrate'])
             ->middleware(['auth', 'verified', 'can:update,tag'])
             ->name('tags.migrate');
+        Route::get('accounts/selling', [TagController::class, 'getSellingAccountsByTag'])
+            ->name('accounts.getSellingAccountsByTag');
     });
 });
 

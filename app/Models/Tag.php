@@ -50,6 +50,11 @@ class Tag extends Model
         return $this->hasMany(static::class, 'parent_slug');
     }
 
+    public function accountTypes(): MorphToMany
+    {
+        return $this->morphedByMany(AccountType::class, 'taggable');
+    }
+
     public function accounts(): MorphToMany
     {
         return $this->morphedByMany(Account::class, 'taggable');
