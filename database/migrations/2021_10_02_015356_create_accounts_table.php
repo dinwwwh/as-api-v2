@@ -31,6 +31,10 @@ class CreateAccountsTable extends Migration
             // Time app pay money for creator
             $table->timestamp('paid_at')->nullable();
 
+            // This is computed property automatically update when update or create account
+            // To help search, manage, account easily
+            $table->integer('status')->nullable();
+
             $table->foreignId('account_type_id')->constrained('account_types', 'id')->onDelete('cascade');
             $table->foreignId('creator_id')->nullable()->constrained('users', 'id')->onDelete('set null');
             $table->foreignId('updater_id')->nullable()->constrained('users', 'id')->onDelete('set null');

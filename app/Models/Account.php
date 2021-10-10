@@ -23,6 +23,12 @@ class Account extends Model
         Searchable,
         Filable;
 
+    // public const CHECKING_STATUS = 1;
+    public const SELLING_STATUS = 2;
+    public const BOUGHT_STATUS = 3;
+    // public const BOUGHT_OKE_STATUS = 4;
+    // public const ERROR_STATUS = 5;
+
     protected  $touches = [];
     protected  $fillable = [
         'description',
@@ -35,6 +41,7 @@ class Account extends Model
         'buyer_id',
         'confirmed_at',
         'paid_at',
+        'status' // computed property
     ];
     protected  $hidden = ['cost'];
     protected  $casts = [
@@ -45,13 +52,32 @@ class Account extends Model
     protected  $with = ['accountType'];
     protected  $withCount = [];
 
+    protected static function booted()
+    {
+        static::creating(function (self $account) {
+            if (is_null($account->bought_at)) {
+                $account->status = static::SELLING_STATUS;
+            } else {
+                $account->status = static::BOUGHT_STATUS;
+            }
+        });
+
+        static::updating(function (self $account) {
+            if (is_null($account->bought_at)) {
+                $account->status = static::SELLING_STATUS;
+            } else {
+                $account->status = static::BOUGHT_STATUS;
+            }
+        });
+    }
+
     /**
      * Determine whether this account is selling
      *
      */
     public function isSelling(): bool
     {
-        return is_null($this->bought_at);
+        return $this->status == static::SELLING_STATUS;
     }
 
     /**
@@ -61,10 +87,7 @@ class Account extends Model
      */
     public function isBought(): bool
     {
-        return !is_null($this->bought_at)
-            && !is_null($this->confirmed_at)
-            && now()->gte($this->bought_at)
-            && now()->lte($this->confirmed_at);
+        return $this->status == static::BOUGHT_STATUS;
     }
 
     /**
@@ -74,10 +97,7 @@ class Account extends Model
      */
     public function isBoughtOke(): bool
     {
-        return !is_null($this->bought_at)
-            && !is_null($this->confirmed_at)
-            && now()->gte($this->bought_at)
-            && now()->gte($this->confirmed_at);
+        return $this->isBought() && $this->confirmed_at && $this->confirmed_at->lte(now());
     }
 
     /**

@@ -56,6 +56,7 @@ class TagController extends Controller
         }
 
         $accounts->whereIn('account_type_id', $accountTypeIds);
+        $accounts->where('status', Account::SELLING_STATUS);
 
         if (request('_perPage')) {
             $accounts =  $accounts->paginate(request('_perPage'));
