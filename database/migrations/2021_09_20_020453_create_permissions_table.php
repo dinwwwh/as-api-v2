@@ -23,12 +23,15 @@ class CreatePermissionsTable extends Migration
             $table->timestamps();
         });
 
-        Schema::create('permission_user', function (Blueprint $table) {
-            $table->foreignUuid('permission_key')->constrained('permissions', 'key')->onDelete('cascade');
-            $table->foreignId('user_id')->constrained('users', 'id')->onDelete('cascade');
+        Schema::create('permissibles', function (Blueprint $table) {
+            $table->foreignUuid('permission_key')
+                ->constrained('permissions', 'key')
+                ->onUpdate('cascade')
+                ->onDelete('cascade');
+            $table->morphs('permissible');
             $table->timestamps();
 
-            $table->primary(['permission_key', 'user_id']);
+            $table->primary(['permission_key', 'permissible_id', 'permissible_type'], 'constrained_permissible_primary_keys');
         });
     }
 
@@ -39,7 +42,7 @@ class CreatePermissionsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('permission_user');
+        Schema::dropIfExists('permissibles');
         Schema::dropIfExists('permissions');
     }
 }

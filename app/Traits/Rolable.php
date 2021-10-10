@@ -3,6 +3,7 @@
 namespace App\Traits;
 
 use App\Models\Role;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 
@@ -37,6 +38,26 @@ trait Rolable
     public function hasRole(Role|string $role): bool
     {
         $roleKey = is_string($role) ? $role : $role->getKey();
-        return !is_null($this->roles()->where('key', $roleKey)->get());
+        return !is_null($this->roles()->where('key', $roleKey)->first(['key']));
+    }
+
+    /**
+     * Determine whether model has any roles
+     *
+     */
+    public function hasAnyRoles(Collection|array $roles): bool
+    {
+        $roleKeys = is_array($roles) ? $roles : $roles->pluck('key')->toArray();
+        return !is_null($this->roles()->whereIn('key', $roleKeys)->first(['key']));
+    }
+
+    /**
+     * Determine whether model has all roles
+     *
+     */
+    public function hasAllRoles(Collection|array $roles): bool
+    {
+        $roleKeys = is_array($roles) ? $roles : $roles->pluck('key')->toArray();
+        return  count($roleKeys) == $this->roles()->whereIn('key', $roleKeys)->count();
     }
 }

@@ -24,7 +24,10 @@ class CreateRulesTable extends Migration
         });
 
         Schema::create('rulables', function (Blueprint $table) {
-            $table->foreignUuid('rule_key')->constrained('rules', 'key')->onDelete('cascade');
+            $table->foreignUuid('rule_key')
+                ->constrained('rules', 'key')
+                ->onUpdate('cascade')
+                ->onDelete('cascade');
             $table->morphs('rulable');
             $table->timestamps();
 

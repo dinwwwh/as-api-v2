@@ -11,7 +11,6 @@ use App\Models\Account;
 use App\Models\Tag;
 use DB;
 use Illuminate\Http\Request;
-use Str;
 
 class TagController extends Controller
 {
@@ -78,9 +77,9 @@ class TagController extends Controller
             DB::beginTransaction();
 
             $tag = Tag::create([
-                'slug' => Str::slug($request->name),
                 'name' => $request->name,
                 'description' => $request->description,
+                'type' => $request->type,
                 'parent_slug' => $request->parent
                     ? Tag::find($request->parent['slug'])?->getRepresentation()?->getKey()
                     : null,
@@ -122,25 +121,7 @@ class TagController extends Controller
                 $tag->update(['parent_slug' => $parentTag->getKey()]);
             }
 
-            if ($request->slug && $request->slug != $tag->getKey()) {
-                $oldTag = $tag;
-                $tag = Tag::create(array_merge(
-                    $oldTag->getAttributes(),
-                    $request->only('name', 'slug', 'type', 'description'),
-                ));
-                $tag->created_at = $oldTag->created_at;
-                $tag->save();
-
-                DB::table('taggables')
-                    ->where('tag_slug', $oldTag->getKey())
-                    ->update([
-                        'tag_slug' => $tag->getKey(),
-                    ]);
-
-                $oldTag->delete();
-            } else {
-                $tag->update($request->only('type', 'description'));
-            }
+            $tag->update($request->only('name', 'type', 'description'));
 
             DB::commit();
         } catch (\Throwable $th) {

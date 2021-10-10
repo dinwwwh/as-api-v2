@@ -25,23 +25,24 @@ class CreateRolesTable extends Migration
         });
 
         Schema::create('permission_role', function (Blueprint $table) {
-            $table->foreignUuid('role_key')->constrained('roles', 'key')->onDelete('cascade');
-            $table->foreignUuid('permission_key')->constrained('permissions', 'key')->onDelete('cascade');
+            $table->foreignUuid('role_key')
+                ->constrained('roles', 'key')
+                ->onUpdate('cascade')
+                ->onDelete('cascade');
+            $table->foreignUuid('permission_key')
+                ->constrained('permissions', 'key')
+                ->onUpdate('cascade')
+                ->onDelete('cascade');
             $table->timestamps();
 
             $table->primary(['role_key', 'permission_key']);
         });
 
-        Schema::create('role_user', function (Blueprint $table) {
-            $table->foreignUuid('role_key')->constrained('roles', 'key')->onDelete('cascade');
-            $table->foreignId('user_id')->constrained('users', 'id')->onDelete('cascade');
-            $table->timestamps();
-
-            $table->primary(['role_key', 'user_id']);
-        });
-
         Schema::create('rolables', function (Blueprint $table) {
-            $table->foreignUuid('role_key')->constrained('roles', 'key')->onDelete('cascade');
+            $table->foreignUuid('role_key')
+                ->constrained('roles', 'key')
+                ->onUpdate('cascade')
+                ->onDelete('cascade');
             $table->morphs('rolable');
             $table->timestamps();
 
@@ -56,9 +57,8 @@ class CreateRolesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('rolables');
-        Schema::dropIfExists('role_user');
         Schema::dropIfExists('permission_role');
+        Schema::dropIfExists('rolables');
         Schema::dropIfExists('roles');
     }
 }

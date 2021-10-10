@@ -25,11 +25,18 @@ class CreateTagsTable extends Migration
         });
 
         Schema::table('tags',  function (Blueprint $table) {
-            $table->foreignUuid('parent_slug')->nullable()->constrained('tags', 'slug')->onDelete('set null');
+            $table->foreignUuid('parent_slug')
+                ->nullable()
+                ->constrained('tags', 'slug')
+                ->onUpdate('cascade')
+                ->onDelete('set null');
         });
 
         Schema::create('taggables', function (Blueprint $table) {
-            $table->foreignUuid('tag_slug')->constrained('tags', 'slug')->onDelete('cascade');
+            $table->foreignUuid('tag_slug')
+                ->constrained('tags', 'slug')
+                ->onUpdate('cascade')
+                ->onDelete('cascade');
             $table->morphs('taggable');
             $table->timestamps();
 

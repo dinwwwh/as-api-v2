@@ -24,11 +24,25 @@ class Tag extends Model
     public  $incrementing = false;
 
     protected  $touches = [];
-    protected  $fillable = ['slug', 'name', 'description', 'type', 'parent_slug'];
+    protected  $fillable = ['name', 'description', 'type', 'parent_slug'];
     protected  $hidden = [];
     protected  $casts = [];
     protected  $with = [];
     protected  $withCount = [];
+
+    /**
+     * Up-to-date slug and name of tag
+     *
+     */
+    protected static function booted()
+    {
+        static::creating(function (self $tag) {
+            $tag->slug = Str::slug($tag->name);
+        });
+        static::updating(function (self $tag) {
+            $tag->slug = Str::slug($tag->name);
+        });
+    }
 
     /**
      * Get parent tag of this tag.

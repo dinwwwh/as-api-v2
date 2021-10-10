@@ -6,6 +6,7 @@ use App\Traits\CreatorAndUpdater;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\MorphToMany;
 
 class Permission extends Model
 {
@@ -23,7 +24,7 @@ class Permission extends Model
     protected  $withCount = [];
 
     /**
-     * Get roles that this permission has
+     * Get roles had this permission
      *
      */
     public function roles(): BelongsToMany
@@ -32,11 +33,11 @@ class Permission extends Model
     }
 
     /**
-     * Get users that has directly this permission
+     * Get users had this permission
      *
      */
-    public function users(): BelongsToMany
+    public function users(): MorphToMany
     {
-        return $this->belongsToMany(User::class);
+        return $this->morphedByMany(User::class, 'permissible');
     }
 }

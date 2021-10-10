@@ -1,46 +1,34 @@
 <?php
 
-namespace App\Models;
+namespace App\Traits;
 
-use App\Traits\CreatorAndUpdater;
+use App\Models\Permission;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 
-class Role extends Model
+trait Permissible
 {
-    use HasFactory, CreatorAndUpdater;
-
-    protected  $primaryKey = 'key';
-    protected  $keyType = 'string';
-    public  $incrementing = false;
-
-    protected  $touches = [];
-    protected  $fillable = ['key', 'name', 'description', 'color'];
-    protected  $hidden = [];
-    protected  $casts = [];
-    protected  $with = [];
-    protected  $withCount = [];
-
-
     /**
-     * Get users had this role
+     * Auto delete relationships when model delete permanently
      *
      */
-    public function users(): MorphToMany
+    protected static function bootPermissible(): void
     {
-        return $this->morphedByMany(User::class, 'rolable');
+        static::deleting(function (Model $model) {
+            if (method_exists($model, 'isForceDeleting') ? $model->isForceDeleting() : true) {
+                $model->permissions()->sync([]);
+            }
+        });
     }
 
     /**
-     * Get permissions of this role
+     * Get users of model
      *
      */
-    public function permissions(): BelongsToMany
+    public function permissions(): MorphToMany
     {
-        return $this->belongsToMany(Permission::class);
+        return $this->morphToMany(Permission::class, 'permissible');
     }
 
     /**
