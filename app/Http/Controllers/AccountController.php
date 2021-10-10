@@ -43,10 +43,34 @@ class AccountController extends Controller
     public function getCreatedByMe()
     {
         if (request('_search')) {
-            $accounts = AccountType::search(request('_search'))
+            $accounts = Account::search(request('_search'))
                 ->where('creator_id', auth()->user()->getKey());
         } else {
-            $accounts = AccountType::where('creator_id', auth()->user()->getKey())
+            $accounts = Account::where('creator_id', auth()->user()->getKey())
+                ->orderBy('id', 'desc');
+        }
+
+        if (request('_perPage')) {
+            $accounts = $accounts->paginate(request('_perPage'));
+        } else {
+            $accounts = $accounts->get();
+        }
+
+        return AccountResource::withLoad($accounts);
+    }
+
+    /**
+     * Get accounts bought by me
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function getBoughtByMe()
+    {
+        if (request('_search')) {
+            $accounts = Account::search(request('_search'))
+                ->where('buyer_id', auth()->user()->getKey());
+        } else {
+            $accounts = Account::where('buyer_id', auth()->user()->getKey())
                 ->orderBy('id', 'desc');
         }
 

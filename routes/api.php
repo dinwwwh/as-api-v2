@@ -204,6 +204,10 @@ Route::prefix('accounts')->group(function () {
         ->middleware(['auth', 'verified'])
         ->name('accounts.getCreatedByMe');
 
+    Route::get('bought-by-me', [AccountController::class, 'getBoughtByMe'])
+        ->middleware(['auth', 'verified'])
+        ->name('accounts.getBoughtByMe');
+
     Route::prefix('{account}')->group(function () {
         Route::get('', [AccountController::class, 'show'])
             ->name('accounts.show');
