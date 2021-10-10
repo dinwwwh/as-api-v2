@@ -87,7 +87,9 @@ class Account extends Model
      */
     public function isBought(): bool
     {
-        return $this->status == static::BOUGHT_STATUS;
+        return $this->status == static::BOUGHT_STATUS
+            && $this->confirmed_at
+            && $this->confirmed_at->gt(now());
     }
 
     /**
@@ -97,7 +99,9 @@ class Account extends Model
      */
     public function isBoughtOke(): bool
     {
-        return $this->isBought() && $this->confirmed_at && $this->confirmed_at->lte(now());
+        return $this->status == static::BOUGHT_STATUS
+            && $this->confirmed_at
+            && $this->confirmed_at->lte(now());
     }
 
     /**
