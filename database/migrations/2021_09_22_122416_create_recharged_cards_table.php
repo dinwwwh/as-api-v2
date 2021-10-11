@@ -23,6 +23,13 @@ class CreateRechargedCardsTable extends Migration
             $table->integer('received_value')->nullable();
             $table->string('description')->nullable();
 
+            /**
+             * If is null then approve manually
+             * If not null use service ro approve
+             *
+             */
+            $table->string('service')->nullable();
+
             $table->foreignId('approver_id')->nullable()->constrained('users', 'id')->onDelete('set null');
             $table->foreignId('creator_id')->nullable()->constrained('users', 'id')->onDelete('set null');
             $table->foreignId('updater_id')->nullable()->constrained('users', 'id')->onDelete('set null');

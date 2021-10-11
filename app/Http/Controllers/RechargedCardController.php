@@ -112,6 +112,7 @@ class RechargedCardController extends Controller
                 'face_value' => $request->faceValue,
                 'serial' => $request->serial,
                 'code' => $request->code,
+                'service' => $request->service,
             ]);
 
             DB::commit();

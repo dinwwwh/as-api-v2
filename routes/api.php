@@ -7,6 +7,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\RechargedCardController;
 use App\Http\Controllers\SettingController;
 use App\Http\Controllers\TagController;
+use App\Http\Controllers\ThesieureController;
 use App\Http\Controllers\UserController;
 use App\Models\Account;
 use App\Models\AccountInfo;
@@ -232,4 +233,14 @@ Route::prefix('accounts')->group(function () {
             ->middleware(['auth', 'verified', 'can:confirm,account'])
             ->name('accounts.confirm');
     });
+});
+
+// ====================================================
+// Thesieure route
+// ====================================================
+Route::prefix('thesieure')->group(function () {
+    Route::get('callback', [ThesieureController::class, 'callback'])
+        ->name('thesieure.callback');
+    Route::get('telcos', [ThesieureController::class, 'getTelcos'])
+        ->name('thesieure.getTelcos');
 });

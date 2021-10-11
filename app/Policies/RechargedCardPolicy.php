@@ -76,6 +76,7 @@ class RechargedCardPolicy
             !is_null($rechargedCard->approver_id)
             || !is_null($rechargedCard->real_face_value)
             || !is_null($rechargedCard->received_value)
+            || !is_null($rechargedCard->service)
         ) return false;
 
         if ($user->hasPermission('approve_recharged_card')) return true;

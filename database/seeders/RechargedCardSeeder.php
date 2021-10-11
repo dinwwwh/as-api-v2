@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\Permission;
 use App\Models\Setting;
+use App\Models\User;
 use Illuminate\Database\Seeder;
 
 class RechargedCardSeeder extends Seeder
@@ -15,10 +16,19 @@ class RechargedCardSeeder extends Seeder
      */
     public function run()
     {
+        Setting::firstOrCreate(['key' => 'open_recharging_card_thesieure'], [
+            'description' => 'Quyết định liệu có mở cổng nạp thẻ qua thesieure hay không.',
+            'assigned_config_key' => 'thesieure.open_recharging_card',
+            'value' => true,
+            'structure_description' => 'true/false',
+            'public' => true,
+            'rules' => ['boolean'],
+        ]);
+
         Setting::firstOrCreate(['key' => 'open_recharging_card'], [
             'description' => 'Quyết định liệu có mở cổng nạp thẻ thủ công hay không.',
             'value' => true,
-            'structure_description' => 'true or false',
+            'structure_description' => 'true/false',
             'public' => true,
             'rules' => ['boolean'],
         ]);
@@ -84,5 +94,17 @@ class RechargedCardSeeder extends Seeder
             'name' => 'quản lý thẻ cào nạp thủ công',
             'description' => 'Quyết định xem người dùng có thể xem thông tin nhạy cảm của tất cả các thẻ, phê duyệt các thẻ mà người khác đang phê duyệt (nếu có quyền phê duyệt).',
         ]);
+
+        User::firstOrCreate(
+            ['login' => 'thesieure'],
+            [
+                'name' => 'Thesieure',
+                'gender' => 'male',
+                'avatar_path' => "https://avatars.dicebear.com/api/male/thesieure.svg",
+                'email' => 'invalid email',
+                'password' => 'invalid bcrypt password', // password
+                'email_verified_at' => now(),
+            ]
+        );
     }
 }

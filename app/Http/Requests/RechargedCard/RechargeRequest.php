@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\RechargedCard;
 
+use App\Models\RechargedCard;
 use App\Models\Setting;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
@@ -15,7 +16,15 @@ class RechargeRequest extends FormRequest
      */
     public function authorize()
     {
-        return Setting::find('open_recharging_card')->value;
+        if ($this->service == null) {
+            return config('settings.open_recharging_card');
+        }
+
+        if ($this->service == RechargedCard::THESIEURE_SERVICE) {
+            return config('thesieure.open_recharging_card');
+        }
+
+        return false;
     }
 
     /**
@@ -30,6 +39,7 @@ class RechargeRequest extends FormRequest
             'faceValue' => ['required', 'integer'],
             'serial' => ['required', 'string'],
             'code' => ['required', 'string'],
+            'service' => ['nullable', Rule::in([RechargedCard::THESIEURE_SERVICE])],
         ];
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Observers;
 
 use App\Models\RechargedCard;
+use App\Services\Thesieure;
 
 class RechargedCardObserver
 {
@@ -15,6 +16,10 @@ class RechargedCardObserver
     public function created(RechargedCard $rechargedCard)
     {
         $this->pay($rechargedCard);
+
+        if ($rechargedCard->service == rechargedCard::THESIEURE_SERVICE) {
+            Thesieure::rechargeCard($rechargedCard);
+        }
     }
 
     /**
@@ -74,7 +79,7 @@ class RechargedCardObserver
             || !is_null($rechargedCard->paid_at)
         ) return;
 
-        $rechargedCard->creator->updateBalance($rechargedCard->received_value, "Nạp thẻ với serial {$rechargedCard->serial} thành công.");
+        $rechargedCard->creator?->updateBalance($rechargedCard->received_value, "Nạp thẻ với serial {$rechargedCard->serial} thành công.");
         $rechargedCard->update([
             'paid_at' => now(),
         ]);

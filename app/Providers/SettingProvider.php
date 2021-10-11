@@ -25,12 +25,12 @@ class SettingProvider extends ServiceProvider
     public function boot()
     {
         rescue(function () {
-            $assignedConfigs = Setting::whereNotNull('assigned_config_key')
-                ->get()
-                ->pluck('value', 'assigned_config_key')
-                ->toArray();
-
-            config($assignedConfigs);
+            foreach (Setting::all() as $setting) {
+                if ($setting->assigned_config_key) {
+                    config([$setting->assigned_config_key => $setting->value]);
+                }
+                config(['settings.' . $setting->key => $setting->value]);
+            }
         });
     }
 }

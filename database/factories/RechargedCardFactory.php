@@ -31,6 +31,7 @@ class RechargedCardFactory extends Factory
             'real_face_value' => null,
             'received_value' => null,
             'description' => $this->faker->sentence(),
+            'service' => null,
         ];
     }
 }
