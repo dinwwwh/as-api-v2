@@ -5,6 +5,7 @@ namespace App\Providers;
 use Arr;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Validation\Rule;
 use Storage;
 use Str;
 
@@ -56,6 +57,35 @@ class AppServiceProvider extends ServiceProvider
         Storage::macro('urlSmartly', function (string $url): string {
             if (Str::startsWith($url, ['https://', 'http://'])) return $url;
             return config('app.url') . $this->url($url);
+        });
+
+        Rule::macro('parse', function (string $rootKey, array $rules, array $extraRootRules = []): array {
+            $isExistedRootRules = key_exists('rootRules', $rules);
+            $currentIndex = 0;
+            $result = [
+                $rootKey => $extraRootRules
+            ];
+
+            if ($isExistedRootRules) {
+                $result[$rootKey] = $rules['rootRules'];
+                unset($rules['rootRules']);
+            };
+
+            foreach ($rules as $key => $rule) {
+                if ($key === $currentIndex && !$isExistedRootRules) {
+                    $result[$rootKey][] = $rule;
+                    $currentIndex++;
+                } elseif (!is_array($rule)) {
+                    $result["$rootKey.$key"] = $rule;
+                } else {
+                    $result  = array_merge(
+                        $result,
+                        Rule::parse("$rootKey.$key", $rule)
+                    );
+                }
+            }
+
+            return $result;
         });
     }
 }
