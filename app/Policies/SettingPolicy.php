@@ -34,6 +34,16 @@ class SettingPolicy
     }
 
     /**
+     * Determine whether user can manage settings
+     *
+     * @return \Illuminate\Auth\Access\Response|bool
+     */
+    public function manage(User $user)
+    {
+        return $user->hasPermission('manage_setting');
+    }
+
+    /**
      * Determine whether user can read value attribute
      *
      * @return \Illuminate\Auth\Access\Response|bool

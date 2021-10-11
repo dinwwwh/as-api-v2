@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\UpdateSettingRequest;
 use App\Http\Resources\SettingResource;
 use App\Models\Setting;
+use DB;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 
 class SettingController extends Controller
@@ -15,7 +18,19 @@ class SettingController extends Controller
      */
     public function index()
     {
-        //
+        if ($search = request('_search')) {
+            $settings = Setting::search($search);
+        } else {
+            $settings = Setting::orderBy('created_at', 'desc');
+        }
+
+        if ($perPage = request('_perPage')) {
+            $settings = $settings->paginate($perPage);
+        } else {
+            $settings = $settings->get();
+        }
+
+        return SettingResource::withLoad($settings);
     }
 
     /**
@@ -37,22 +52,11 @@ class SettingController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
+     * Create a new setting.
      *
      * @return \Illuminate\Http\Response
      */
     public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
     {
         //
     }
@@ -65,18 +69,7 @@ class SettingController extends Controller
      */
     public function show(Setting $setting)
     {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Setting  $setting
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Setting $setting)
-    {
-        //
+        return SettingResource::withLoad($setting);
     }
 
     /**
@@ -86,9 +79,20 @@ class SettingController extends Controller
      * @param  \App\Models\Setting  $setting
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Setting $setting)
+    public function update(UpdateSettingRequest $request, Setting $setting)
     {
-        //
+        try {
+            DB::beginTransaction();
+
+            $setting->update($request->only(['description', 'value']));
+
+            DB::commit();
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            throw $th;
+        }
+
+        return SettingResource::withLoad($setting);
     }
 
     /**
@@ -97,7 +101,7 @@ class SettingController extends Controller
      * @param  \App\Models\Setting  $setting
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Setting $setting)
+    public function delete(Setting $setting)
     {
         //
     }

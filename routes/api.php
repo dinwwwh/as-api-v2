@@ -66,8 +66,19 @@ Route::post('reset-password', [AuthController::class, 'resetPassword'])
 // ====================================================
 
 Route::prefix('settings')->group(function () {
+    Route::get('', [SettingController::class, 'index'])
+        ->name('settings.index');
+
     Route::get('public', [SettingController::class, 'getPublicSettings'])
         ->name('settings.public');
+
+    Route::prefix('{setting}')->group(function () {
+        Route::get('', [SettingController::class, 'show'])
+            ->name('settings.show');
+        Route::put('', [SettingController::class, 'update'])
+            ->middleware(['auth', 'verified', 'can:update,setting'])
+            ->name('settings.update');
+    });
 });
 
 

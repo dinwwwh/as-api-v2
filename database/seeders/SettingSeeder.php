@@ -18,5 +18,10 @@ class SettingSeeder extends Seeder
             'name' => 'cập nhật cài đặt hệ thống',
             'description' => 'Quyết định xem người dùng có thể cập nhật các cài đặt của hệ thống.'
         ]);
+
+        Permission::firstOrCreate(['key' => 'manage_setting'], [
+            'name' => 'quản lý cài đặt hệ thống',
+            'description' => 'Quyết định xem người dùng có thể quản lý các cài đặt của hệ thống.'
+        ]);
     }
 }
