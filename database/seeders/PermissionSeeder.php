@@ -15,5 +15,15 @@ class PermissionSeeder extends Seeder
     public function run()
     {
         // Permission::firstOrCreate([], []);
+
+        Permission::firstOrCreate(['key' => 'manage_user'], [
+            'name' => 'quản lý người dùng',
+            'description' => 'Quyết định xem người dùng có thể quản lý người dùng.'
+        ]);
+
+        Permission::firstOrCreate(['key' => 'update_user'], [
+            'name' => 'cập nhật người dùng',
+            'description' => 'Quyết định xem người dùng có thể cập nhật thông tin bất cứ người dùng nào.'
+        ]);
     }
 }

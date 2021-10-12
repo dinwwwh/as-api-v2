@@ -2,12 +2,36 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\User\UpdateBalanceRequest;
 use App\Http\Resources\UserResource;
 use App\Models\User;
+use DB;
 use Illuminate\Http\Request;
 
 class UserController extends Controller
 {
+    /**
+     * Get users
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function index()
+    {
+        if ($search = request('_search')) {
+            $users = User::search($search);
+        } else {
+            $users = User::orderBy('id', 'desc');
+        }
+
+        if ($perPage = request('_perPage')) {
+            $users = $users->paginate($perPage);
+        } else {
+            $users = $users->get();
+        }
+
+        return UserResource::withLoad($users);
+    }
+
     /**
      * Find user by compare strictly.
      *
@@ -61,9 +85,9 @@ class UserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(User $user)
     {
-        //
+        return UserResource::withLoad($user);
     }
 
     /**
@@ -76,6 +100,27 @@ class UserController extends Controller
     public function update(Request $request, $id)
     {
         //
+    }
+
+    /**
+     * Handle update balance of user
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function updateBalance(UpdateBalanceRequest $request, User $user)
+    {
+        try {
+            DB::beginTransaction();
+
+            $user->updateBalance($request->amount, $request->description);
+
+            DB::commit();
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            throw $th;
+        }
+
+        return UserResource::withLoad($user);
     }
 
     /**

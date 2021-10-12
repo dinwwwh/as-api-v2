@@ -15,6 +15,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use Laravel\Scout\Searchable;
 
 class User extends Authenticatable
 {
@@ -24,7 +25,8 @@ class User extends Authenticatable
         CreatorAndUpdater,
         Loggable,
         Rolable,
-        Permissible;
+        Permissible,
+        Searchable;
 
     protected $fillable = [
         'name',

@@ -6,6 +6,7 @@ use App\Models\AccountType;
 use App\Models\RechargedCard;
 use App\Models\Setting;
 use App\Models\Tag;
+use App\Models\User;
 use App\Traits\WithLoad;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Storage;
@@ -48,6 +49,9 @@ class UserResource extends JsonResource
                     'canManageTag' => auth()->user()->can('manage', Tag::class),
                     'canCreateTag' => auth()->user()->can('create', Tag::class),
                     'canManageSetting' => auth()->user()->can('manage', Setting::class),
+                    'canManageUser' => auth()->user()->can('manage', User::class),
+
+                    'canUpdate' => auth()->user()->can('update', $this->resource),
                 ],
             ),
         ]);

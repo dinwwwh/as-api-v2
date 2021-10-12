@@ -88,10 +88,22 @@ Route::prefix('settings')->group(function () {
 // ====================================================
 
 Route::prefix('users')->group(function () {
+    Route::get('', [UserController::class, 'index'])
+        ->name('users.index');
+
     Route::get('find-strictly', [UserController::class, 'findStrictly'])
         ->name('users.findStrictly');
+
     Route::get('search-strictly', [UserController::class, 'searchStrictly'])
         ->name('users.searchStrictly');
+
+    Route::prefix('{user}')->group(function () {
+        Route::get('', [UserController::class, 'show'])
+            ->name('users.show');
+        Route::patch('balance', [UserController::class, 'updateBalance'])
+            ->middleware(['auth', 'verified', 'can:update,user'])
+            ->name('users.updateBalance');
+    });
 });
 
 // ====================================================
