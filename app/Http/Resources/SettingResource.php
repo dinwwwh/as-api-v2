@@ -18,6 +18,8 @@ class SettingResource extends JsonResource
     public function toArray($request)
     {
         return array_merge(parent::toArray($request), [
+            'value' => $this->when($this->public, $this->value),
+
             $this->mergeWhen(
                 auth()->check() && request('_sensitive'),
                 fn () => [
