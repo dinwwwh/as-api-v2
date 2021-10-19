@@ -30,9 +30,12 @@ class UserFactory extends Factory
 
         // Need try/catch since default unit tests don't connect to database
         try {
-            do {
+            $email = $this->faker->unique()->safeEmail();
+            for ($i = 0; User::where('email', $email)->first(); $i++) {
                 $email = $this->faker->unique()->safeEmail();
-            } while (User::where('email', $email)->first());
+
+                if ($i == 100) break;
+            }
         } catch (\Throwable $th) {
             //throw $th;
             $email = $this->faker->unique()->safeEmail();
