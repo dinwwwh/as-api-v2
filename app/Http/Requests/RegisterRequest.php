@@ -25,7 +25,7 @@ class RegisterRequest extends FormRequest
             'name' => ['required', 'string'],
             'gender' => ['required', 'in:male,female,other'],
             'email' => ['required', 'email', 'unique:users'],
-            'login' => ['required', 'regex:/^[a-z]{6,36}$/', 'unique:users'],
+            'login' => ['required', 'string', 'min:6', 'max:36', 'unique:users'],
             'password' => ['required', 'string', 'min:8'],
         ];
     }
