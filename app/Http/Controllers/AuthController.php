@@ -41,8 +41,7 @@ class AuthController extends Controller
             throw $th;
         }
 
-        auth()->login($user);
-        return UserResource::withLoad(auth()->user());
+        return UserResource::withLoad($user->refresh());
     }
 
     /**
