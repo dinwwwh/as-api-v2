@@ -14,8 +14,10 @@ trait WithLoad
      * Auto load _relationships and _counts were required
      *
      */
-    public static function withLoad(Collection|Model|Authenticatable|Paginator $resource)
+    public static function withLoad(null|Collection|Model|Authenticatable|Paginator $resource)
     {
+        if (is_null($resource)) return new static($resource);
+
         $resource->load(request('_relationships', []));
         $resource->loadCount(request('_counts', []));
 
