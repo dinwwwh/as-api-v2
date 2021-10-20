@@ -23,6 +23,7 @@ class AuthServiceProvider extends ServiceProvider
         'App\Models\AccountInfo' => 'App\Policies\AccountInfoPolicy',
         'App\Models\Account' => 'App\Policies\AccountPolicy',
         'App\Models\Pivot\AccountAccountInfo' => 'App\Policies\Pivot\AccountAccountInfoPolicy',
+        'App\Models\Validator' => 'App\Policies\ValidatorPolicy',
     ];
 
     /**

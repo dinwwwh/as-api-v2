@@ -50,6 +50,8 @@ class UserResource extends JsonResource
                     'canCreateTag' => auth()->user()->can('create', Tag::class),
                     'canManageSetting' => auth()->user()->can('manage', Setting::class),
                     'canManageUser' => auth()->user()->can('manage', User::class),
+                    'canCreateValidator' => auth()->user()->can('create', Validator::class),
+                    'canManageValidator' => auth()->user()->can('manage', Validator::class),
 
                     'canUpdate' => auth()->user()->can('update', $this->resource),
                 ],

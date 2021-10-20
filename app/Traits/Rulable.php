@@ -31,7 +31,7 @@ trait Rulable
     }
 
     /**
-     * Convert all rules of this model to laravel rules used in validation
+     * Convert all rules of this model to laravel rules used in validator
      *
      */
     public function getValidatableRules(): array

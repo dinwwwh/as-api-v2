@@ -9,10 +9,12 @@ use App\Http\Controllers\SettingController;
 use App\Http\Controllers\TagController;
 use App\Http\Controllers\ThesieureController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\ValidatorController;
 use App\Models\Account;
 use App\Models\AccountInfo;
 use App\Models\AccountType;
 use App\Models\Tag;
+use App\Models\Validator;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -255,4 +257,24 @@ Route::prefix('thesieure')->group(function () {
         ->name('thesieure.callback');
     Route::get('telcos', [ThesieureController::class, 'getTelcos'])
         ->name('thesieure.getTelcos');
+});
+
+// ====================================================
+// Validator routes
+// ====================================================
+Route::prefix('validators')->group(function () {
+    Route::get('', [ValidatorController::class, 'index'])
+        ->name('validators.index');
+
+    Route::post('', [ValidatorController::class, 'create'])
+        ->middleware(['auth', 'verified', 'can:create,' . Validator::class])
+        ->name('validators.create');
+
+    Route::prefix('{validator}')->group(function () {
+        Route::get('', [ValidatorController::class, 'show'])
+            ->name('validators.show');
+        Route::put('', [ValidatorController::class, 'update'])
+            ->middleware(['auth', 'verified', 'can:update,validator'])
+            ->name('validators.update');
+    });
 });

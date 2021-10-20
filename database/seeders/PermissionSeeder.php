@@ -25,5 +25,20 @@ class PermissionSeeder extends Seeder
             'name' => 'cập nhật người dùng',
             'description' => 'Quyết định xem người dùng có thể cập nhật thông tin bất cứ người dùng nào.'
         ]);
+
+        Permission::firstOrCreate(['key' => 'create_validator'], [
+            'name' => 'tạo kiểm chứng',
+            'description' => 'Quyết định xem người dùng có thể tạo kiểm chứng.'
+        ]);
+
+        Permission::firstOrCreate(['key' => 'update_validator'], [
+            'name' => 'cập nhật kiểm chứng',
+            'description' => 'Quyết định xem người dùng có thể cập nhật kiểm chứng.'
+        ]);
+
+        Permission::firstOrCreate(['key' => 'manage_validator'], [
+            'name' => 'quản lý kiểm chứng',
+            'description' => 'Quyết định xem người dùng có thể quản lý kiểm chứng.'
+        ]);
     }
 }
