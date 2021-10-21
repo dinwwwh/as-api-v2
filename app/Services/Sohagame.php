@@ -13,7 +13,7 @@ class Sohagame
         private string $username,
         private string $password,
         private string $accessToken,
-        private Carbon $expiredAccessTokenTime = null,
+        private ?Carbon $expiredAccessTokenTime = null,
     ) {
     }
 
