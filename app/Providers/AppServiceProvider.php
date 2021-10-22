@@ -8,6 +8,7 @@ use Illuminate\Support\ServiceProvider;
 use Illuminate\Validation\Rule;
 use Storage;
 use Str;
+use Validator;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -86,6 +87,21 @@ class AppServiceProvider extends ServiceProvider
             }
 
             return $result;
+        });
+
+        // Rule for check keys of array
+        Validator::extend('keys', function ($attribute, $value, $parameters, $validator) {
+            if (!is_array($value)) return false;
+            $keys = array_keys($value);
+            $validation = Validator::make([
+                'keys' => $keys,
+            ], [
+                'keys.*' => $parameters
+            ]);
+            return !$validation->fails();
+        });
+        Validator::replacer('keys', function ($message, $attribute, $rule, $parameters) {
+            return 'Keys of this object must pass rules[' . implode(', ', $parameters) . '].';
         });
     }
 }
