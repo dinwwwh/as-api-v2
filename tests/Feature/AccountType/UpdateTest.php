@@ -2,9 +2,11 @@
 
 namespace Tests\Feature\AccountType;
 
+use App\Models\AccountInfo;
 use App\Models\AccountType;
 use App\Models\Tag;
 use App\Models\User;
+use App\Models\Validator;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Str;
@@ -15,15 +17,32 @@ class UpdateTest extends TestCase
     public function test_controller()
     {
         $user = $this->factoryUser(['update_account_type']);
-        $accountType = AccountType::factory()->state([
-            'creator_id' => $user->getKey(),
-        ])->create();
+        $accountType = AccountType::factory()
+            ->state([
+                'creator_id' => $user->getKey(),
+            ])
+            ->has(AccountInfo::factory()->count(2))
+            ->create();
         $router = route('accountTypes.update', ['accountType' => $accountType]);
         $data = [
             'name' => Str::random(),
             'description' => Str::random(),
             'tags' => Tag::factory()->count(5)->make()->toArray(),
             'users' => User::inRandomOrder()->limit(5)->get()->toArray(),
+            'validators' => [
+                [
+                    'id' => Validator::factory()->create()->getKey(),
+                    'pivot' => [
+                        'type' => Validator::CREATED_TYPE,
+                        'mappedReadableFields' => [
+                            'field 1' => $accountType->accountInfos()->first()->getKey(),
+                        ],
+                        'mappedUpdatableFields' => [
+                            'field 1' => $accountType->accountInfos()->first()->getKey(),
+                        ]
+                    ]
+                ]
+            ]
         ];
 
         $this->actingAs($user)
@@ -38,6 +57,7 @@ class UpdateTest extends TestCase
 
         $this->assertEquals(count($data['users']), $accountType->users()->count());
         $this->assertEquals(count($data['tags']), $accountType->tags()->count());
+        $this->assertEquals(count($data['validators']), $accountType->validators()->count());
         $this->assertEquals(1, $accountType->logs()->count());
     }
 

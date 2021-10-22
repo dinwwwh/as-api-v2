@@ -40,6 +40,8 @@ class CreateRequest extends FormRequest
             'name' => ['required', 'string'],
             'slug' => ['required', 'string', 'unique:validators,slug'],
 
+            'fee' => ['integer', 'min:0'],
+
             'description' => ['required', 'string'],
             'approverDescription' => ['required', 'string'],
 

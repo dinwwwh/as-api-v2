@@ -45,6 +45,8 @@ class UpdateRequest extends FormRequest
                     ->ignore($this->route('validator')->slug, 'slug')
             ],
 
+            'fee' => ['integer', 'min:0'],
+
             'description' => ['string'],
             'approverDescription' => ['string'],
 

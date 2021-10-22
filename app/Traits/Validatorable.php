@@ -23,14 +23,48 @@ trait Validatorable
     }
 
     /**
+     * Fast sync orderly validator relationship
+     *
+     */
+    public function validator(array $validators): array
+    {
+        return $this->validators()->sync(
+            collect($validators)
+                ->mapWithKeys(function ($validator, $order) {
+                    return [$validator['id'] => [
+                        'mapped_readable_fields' => $validator['pivot']['mappedReadableFields'],
+                        'mapped_updatable_fields' => $validator['pivot']['mappedUpdatableFields'],
+                        'type' => $validator['pivot']['type'] ?? null,
+                        'order' => $order + 1,
+                    ]];
+                })
+                ->toArray(),
+        );
+    }
+
+    /**
      * Get validators of the model
      *
      */
     public function validators(): MorphToMany
     {
         return $this->morphToMany(Validator::class, 'validatorable')
-            ->withPivot(['mapped_readable_fields', 'mapped_updatable_fields'])
+            ->withPivot(['mapped_readable_fields', 'mapped_updatable_fields', 'type', 'order'])
             ->using(PivotValidatorable::class)
-            ->withTimestamps();
+            ->withTimestamps()
+            ->orderByPivot('order');
+    }
+
+
+    /**
+     * Get validator fees by $type
+     *
+     */
+    public function getValidatorFees(?int $type = null): int
+    {
+        return $this->validators()
+            ->wherePivot('type', $type)
+            ->get()
+            ->sum('fee');
     }
 }

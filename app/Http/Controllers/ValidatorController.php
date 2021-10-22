@@ -53,6 +53,7 @@ class ValidatorController extends Controller
                     'approverDescription',
                     'readableFields',
                     'updatableFields',
+                    'fee',
                 ]))
             );
 
@@ -92,6 +93,7 @@ class ValidatorController extends Controller
                     'approverDescription',
                     'readableFields',
                     'updatableFields',
+                    'fee',
                 ]))
             );
 

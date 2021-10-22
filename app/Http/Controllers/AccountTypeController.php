@@ -88,6 +88,7 @@ class AccountTypeController extends Controller
             $accountType->log('đã cập nhật thông tin');
             if ($request->tags) $accountType->tag($request->tags);
             if ($request->users) $accountType->user($request->users);
+            if ($request->has('validators')) $accountType->validator($request->validators);
 
             DB::commit();
         } catch (\Throwable $th) {

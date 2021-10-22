@@ -18,6 +18,7 @@ class CreateValidatorsTable extends Migration
             $table->string('name');
             $table->string('slug')->unique();
             $table->text('description');
+            $table->unsignedBigInteger('fee')->default(0); // fee when validate = this validators
 
             /**
              * Description for approver describe about how to validate
@@ -49,6 +50,7 @@ class CreateValidatorsTable extends Migration
         Schema::create('validatorables', function (Blueprint $table) {
             $table->foreignId('validator_id')->constrained('validators', 'id')->onDelete('cascade');
             $table->morphs('validatorable');
+            $table->integer('order')->nullable();
 
             /**
              * Contain infos about anything that help `checkable model`
@@ -59,8 +61,13 @@ class CreateValidatorsTable extends Migration
             $table->json('mapped_readable_fields');
             $table->json('mapped_updatable_fields');
 
+            /**
+             * Determine will validate in which hooks of validatable
+             *
+             */
+            $table->integer('type')->nullable();
+
             $table->timestamps();
-            $table->primary(['validator_id', 'validatorable_id', 'validatorable_type'], 'validatorables_table_primary');
         });
     }
 
