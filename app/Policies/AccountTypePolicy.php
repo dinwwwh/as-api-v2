@@ -2,8 +2,11 @@
 
 namespace App\Policies;
 
+use App\Models\Account;
 use App\Models\AccountType;
 use App\Models\User;
+use App\Models\Validator;
+use App\Models\Validatorable;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
 class AccountTypePolicy
@@ -67,6 +70,26 @@ class AccountTypePolicy
 
         return $user->getKey() === $accountType->creator_id
             || $this->manage($user);
+    }
+
+    /**
+     * Determine whether create new validatorable relation
+     *
+     */
+    public function createValidatorable(User $user, AccountType $accountType, Validator $validator)
+    {
+        return $this->update($user, $accountType);
+    }
+
+    /**
+     * Determine whether delete validatorable relation
+     *
+     */
+    public function deleteValidatorable(User $user, AccountType $accountType, Validatorable $validatorable)
+    {
+        return $validatorable->parent_id == $accountType->getKey() &&
+            $validatorable->parent_type == $accountType->getMorphClass() &&
+            $this->update($user, $accountType);
     }
 
     /**

@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use App\Traits\CreatorAndUpdater;
-use App\Traits\Validationable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -24,7 +23,7 @@ class Validation extends Model
         'description',
         'validationable_id',
         'validationable_type',
-        'validator_id',
+        'validatorable_id',
     ];
     protected  $hidden = [
         'updated_values'
@@ -48,15 +47,12 @@ class Validation extends Model
      */
     protected static function booted()
     {
-        static::creating(function (self $validation) {
+        static::created(function (self $validation) {
+            $validation->validatorable->validator->runCallback($validation);
             $validation->validationable->touch();
         });
 
-        static::created(function (self $validation) {
-            $validation->validator->runCallback($validation);
-        });
-
-        static::updating(function (self $validation) {
+        static::updated(function (self $validation) {
             $validation->validationable->touch();
 
             if (
@@ -66,7 +62,7 @@ class Validation extends Model
                 $validation->validationable->handleUpdatableValues($validation);
         });
 
-        static::deleting(function (self $validation) {
+        static::deleted(function (self $validation) {
             $validation->validationable->touch();
         });
     }
@@ -98,9 +94,9 @@ class Validation extends Model
      * Get relationship to Validator
      *
      */
-    public function validator(): BelongsTo
+    public function validatorable(): BelongsTo
     {
-        return $this->belongsTo(Validator::class);
+        return $this->belongsTo(Validatorable::class);
     }
 
     /**

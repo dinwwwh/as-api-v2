@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\AccountType\CreateValidatorableRequest;
 use App\Http\Requests\CreateAccountTypeRequest;
 use App\Http\Requests\UpdateAccountTypeRequest;
 use App\Http\Resources\AccountTypeResource;
 use App\Models\AccountType;
+use App\Models\Validator;
+use App\Models\Validatorable;
 use DB;
 
 class AccountTypeController extends Controller
@@ -75,6 +78,52 @@ class AccountTypeController extends Controller
     }
 
     /**
+     * Create validatorable relationship
+     *
+     */
+    public function createValidatorable(CreateValidatorableRequest $request, AccountType $accountType, Validator $validator)
+    {
+        try {
+            DB::beginTransaction();
+
+            $validatorable = $accountType->validatorables()->create([
+                'validator_id' => $validator->getKey(),
+                'type' => $request->type,
+                'order' => $request->order,
+                'mapped_readable_fields' => $request->mappedReadableFields,
+                'mapped_updatable_fields' => $request->mappedUpdatableFields,
+            ]);
+
+            DB::commit();
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            throw $th;
+        }
+
+        return AccountTypeResource::withLoad($accountType);
+    }
+
+    /**
+     * Delete validatorable relationship
+     *
+     */
+    public function deleteValidatorable(AccountType $accountType, Validatorable $validatorable)
+    {
+        try {
+            DB::beginTransaction();
+
+            $validatorable->delete();
+
+            DB::commit();
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            throw $th;
+        }
+
+        return AccountTypeResource::withLoad($accountType);
+    }
+
+    /**
      * Update the specified resource in storage.
      *
      * @return \Illuminate\Http\Response
@@ -88,7 +137,6 @@ class AccountTypeController extends Controller
             $accountType->log('đã cập nhật thông tin');
             if ($request->tags) $accountType->tag($request->tags);
             if ($request->users) $accountType->user($request->users);
-            if ($request->has('validators')) $accountType->validator($request->validators);
 
             DB::commit();
         } catch (\Throwable $th) {

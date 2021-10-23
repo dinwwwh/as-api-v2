@@ -46,29 +46,6 @@ class CreateValidatorsTable extends Migration
             $table->foreignId('updater_id')->nullable()->constrained('users', 'id')->onDelete('set null');
             $table->timestamps();
         });
-
-        Schema::create('validatorables', function (Blueprint $table) {
-            $table->foreignId('validator_id')->constrained('validators', 'id')->onDelete('cascade');
-            $table->morphs('validatorable');
-            $table->integer('order')->nullable();
-
-            /**
-             * Contain infos about anything that help `checkable model`
-             * handle to provide `readable fields` for validator or help
-             * handle infos from `updatable fields` of validator to `checkable model`
-             *
-             */
-            $table->json('mapped_readable_fields');
-            $table->json('mapped_updatable_fields');
-
-            /**
-             * Determine will validate in which hooks of validatable
-             *
-             */
-            $table->integer('type')->nullable();
-
-            $table->timestamps();
-        });
     }
 
     /**
@@ -78,7 +55,6 @@ class CreateValidatorsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('validatorables');
         Schema::dropIfExists('validators');
     }
 }

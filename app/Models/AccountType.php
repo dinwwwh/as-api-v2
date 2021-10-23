@@ -6,15 +6,20 @@ use App\Traits\CreatorAndUpdater;
 use App\Traits\Loggable;
 use App\Traits\Taggable;
 use App\Traits\Userable;
-use App\Traits\Validatorable;
+use App\Traits\ValidatorableParent;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class AccountType extends Model
 {
-    use HasFactory, CreatorAndUpdater, Taggable, Userable, Loggable, Validatorable;
+    use
+        HasFactory,
+        CreatorAndUpdater,
+        Taggable,
+        Userable,
+        Loggable,
+        ValidatorableParent;
 
     protected  $touches = [];
     protected  $fillable = [

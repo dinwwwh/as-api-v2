@@ -200,6 +200,15 @@ Route::prefix('account-types')->group(function () {
                 ->middleware(['auth', 'verified', 'can:create,' . Account::class . ',accountType'])
                 ->name('accounts.create');
         });
+
+        Route::prefix('validatorables')->group(function () {
+            Route::post('{validator}', [AccountTypeController::class, 'createValidatorable'])
+                ->middleware(['auth', 'verified', 'can:createValidatorable,accountType,validator'])
+                ->name('accountTypes.createValidatorable');
+            Route::delete('{validatorable}', [AccountTypeController::class, 'deleteValidatorable'])
+                ->middleware(['auth', 'verified', 'can:deleteValidatorable,accountType,validatorable'])
+                ->name('accountTypes.deleteValidatorable');
+        });
     });
 });
 
