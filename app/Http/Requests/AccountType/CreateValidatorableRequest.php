@@ -19,6 +19,23 @@ class CreateValidatorableRequest extends FormRequest
     }
 
     /**
+     * Prepare data for validator
+     *
+     */
+    public function prepareForValidation()
+    {
+        if (is_array($this->mappedReadableFields))
+            $this->merge([
+                'mappedReadableFieldKeys' => array_keys($this->mappedReadableFields),
+            ]);
+
+        if (is_array($this->mappedUpdatableFields))
+            $this->merge([
+                'mappedUpdatableFieldKeys' => array_keys($this->mappedUpdatableFields),
+            ]);
+    }
+
+    /**
      * Get the validation rules that apply to the request.
      *
      * @return array
@@ -37,12 +54,12 @@ class CreateValidatorableRequest extends FormRequest
                 Validatorable::BOUGHT_TYPE,
             ])],
 
+            'mappedReadableFieldKeys.*' => ['string', 'distinct', Rule::in($validator->readable_fields)],
             'mappedReadableFields' => [
                 'present',
                 'array',
                 'min:' . count($validator->readable_fields),
                 'max:' . count($validator->readable_fields),
-                'keys:string,' . Rule::in($validator->readable_fields)
             ],
             'mappedReadableFields.*' => [
                 'integer',
@@ -50,12 +67,12 @@ class CreateValidatorableRequest extends FormRequest
                     ->where('account_type_id', $accountType->getKey())
             ],
 
+            'mappedUpdatableFieldKeys.*' => ['string', 'distinct', Rule::in($validator->updatable_fields)],
             'mappedUpdatableFields' => [
                 'present',
                 'array',
                 'min:' . count($validator->updatable_fields),
                 'max:' . count($validator->updatable_fields),
-                'keys:string,' . Rule::in($validator->updatable_fields)
             ],
             'mappedUpdatableFields.*' => [
                 'integer',
