@@ -2,7 +2,7 @@
 
 namespace Database\Factories;
 
-use App\Models\User;
+use App\Models\Account;
 use App\Models\Validation;
 use App\Models\Validatorable;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -25,8 +25,8 @@ class ValidationFactory extends Factory
     {
         return [
             'validatorable_id' => Validatorable::factory(),
-            'validationable_id' => User::factory(),
-            'validationable_type' => (new User)->getMorphClass(),
+            'validationable_id' => Account::factory(),
+            'validationable_type' => (new Account)->getMorphClass(),
             'is_approving' => false,
             'is_error' => false,
             'approver_id' => null,

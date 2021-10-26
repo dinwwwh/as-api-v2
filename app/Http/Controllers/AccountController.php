@@ -8,6 +8,7 @@ use App\Http\Requests\Account\UpdateRequest;
 use App\Http\Resources\AccountResource;
 use App\Models\Account;
 use App\Models\AccountType;
+use App\Models\Validatorable;
 use DB;
 use Illuminate\Http\Request;
 use Storage;
@@ -113,6 +114,8 @@ class AccountController extends Controller
                 ]);
             }
 
+            $account->validate(Validatorable::CREATED_TYPE);
+
             DB::commit();
         } catch (\Throwable $th) {
             Storage::delete($account->images->pluck('path'));
@@ -152,6 +155,8 @@ class AccountController extends Controller
                 'bought_at_price' => $bestPrice,
             ]);
             $account->log('mua tài khoản');
+
+            $account->validate(Validatorable::BOUGHT_TYPE);
 
             DB::commit();
         } catch (\Throwable $th) {
@@ -223,6 +228,8 @@ class AccountController extends Controller
                 }
                 $oldImages->each(fn ($oldImage) => $oldImage->delete());
             }
+
+            $account->validate(Validatorable::UPDATED_TYPE);
 
             DB::commit();
         } catch (\Throwable $th) {

@@ -9,6 +9,7 @@ use App\Http\Controllers\SettingController;
 use App\Http\Controllers\TagController;
 use App\Http\Controllers\ThesieureController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\ValidationController;
 use App\Http\Controllers\ValidatorController;
 use App\Models\Account;
 use App\Models\AccountInfo;
@@ -285,5 +286,28 @@ Route::prefix('validators')->group(function () {
         Route::put('', [ValidatorController::class, 'update'])
             ->middleware(['auth', 'verified', 'can:update,validator'])
             ->name('validators.update');
+    });
+});
+
+// ====================================================
+// Validation routes
+// ====================================================
+Route::prefix('validations')->group(function () {
+    Route::get('', [ValidationController::class, 'index'])
+        ->name('validations.index');
+
+    Route::get('approvable-by-me', [ValidationController::class, 'approvableByMe'])
+        ->middleware(['auth', 'verified'])
+        ->name('validations.approvableByMe');
+
+    Route::prefix('{validation}')->group(function () {
+        Route::get('', [ValidationController::class, 'show'])
+            ->name('validations.show');
+        Route::patch('start-approving', [ValidationController::class, 'startApproving'])
+            ->middleware(['auth', 'verified', 'can:startApproving,validation'])
+            ->name('validations.startApproving');
+        Route::patch('end-approving', [ValidationController::class, 'endApproving'])
+            ->middleware(['auth', 'verified', 'can:endApproving,validation'])
+            ->name('validations.endApproving');
     });
 });

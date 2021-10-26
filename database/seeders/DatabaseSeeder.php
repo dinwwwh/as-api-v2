@@ -23,6 +23,7 @@ class DatabaseSeeder extends Seeder
         $this->call(FileSeeder::class);
         $this->call(AccountSeeder::class);
         $this->call(ValidatorSeeder::class);
+        $this->call(ValidationSeeder::class);
 
         $this->call(PermissionSeeder::class);
         $this->call(RoleSeeder::class);

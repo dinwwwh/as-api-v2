@@ -58,7 +58,7 @@ class AccountPolicy
      */
     public function buy(User $user, Account $account)
     {
-        return is_null($account->bought_at) && $user->balance >= $account->price;
+        return $account->isSelling() && $user->balance >= $account->price;
     }
 
     /**
@@ -78,9 +78,8 @@ class AccountPolicy
      */
     public function update(User $user, Account $account)
     {
-        if (!is_null($account->bought_at)) return false;
-
-        if ($account->creator_id == $user->getKey()) return true;
+        return $account->isSelling()
+            && $account->creator_id == $user->getKey();
     }
 
     /**

@@ -40,5 +40,10 @@ class PermissionSeeder extends Seeder
             'name' => 'quản lý kiểm chứng',
             'description' => 'Quyết định xem người dùng có thể quản lý kiểm chứng.'
         ]);
+
+        Permission::firstOrCreate(['key' => 'manage_validation'], [
+            'name' => 'quản lý kiểm chứng đối tượng',
+            'description' => 'Quyết định xem người dùng có thể quản lý các kiểm chứng đối tượng.'
+        ]);
     }
 }

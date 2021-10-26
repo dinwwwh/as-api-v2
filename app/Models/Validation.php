@@ -10,6 +10,12 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Laravel\Scout\Searchable;
 
+/**
+ * Is relationship of `validatorable` model
+ * `validationable` relationship of this model
+ * must implements `App\Interfaces\Validatable` interface
+ *
+ */
 class Validation extends Model
 {
     use HasFactory, CreatorAndUpdater, Searchable;
@@ -18,7 +24,7 @@ class Validation extends Model
     protected  $fillable = [
         'approver_id',
         'is_error',
-        'is_pending',
+        'is_approving',
         'updated_values',
         'description',
         'validationable_id',
@@ -31,9 +37,7 @@ class Validation extends Model
     protected  $casts = [
         'updated_values' => 'array'
     ];
-    protected  $with = [
-        'validationable'
-    ];
+    protected  $with = [];
     protected  $withCount = [];
 
     /**
@@ -44,50 +48,40 @@ class Validation extends Model
      *
      * And auto call `handleUpdatableValues` on validationable when needed
      *
+     * Need sleep per event relate database, because dispatch super fast
+     * => database not updated yet (likely)
+     *
      */
     protected static function booted()
     {
         static::created(function (self $validation) {
-            $validation->validatorable->validator->runCallback($validation);
-            $validation->validationable->touch();
+            if ($validation->isSuccess()) $validation->next();
+            $validation->touchValidationable();
+            $validation->runValidatorCallback();
         });
 
         static::updated(function (self $validation) {
-            $validation->validationable->touch();
-
+            if ($validation->isSuccess()) $validation->next();
+            $validation->touchValidationable();
             if (
                 $validation->isDirty('updated_values')
                 && is_array($validation->updated_values)
             )
-                $validation->validationable->handleUpdatableValues($validation);
+                $validation->handleUpdatableValues();
         });
 
         static::deleted(function (self $validation) {
-            $validation->validationable->touch();
+            $validation->touchValidationable();
         });
     }
 
     /**
-     * Determine whether this model is oldest approvable
-     * [can start - can end]
+     * Run validator callback
      *
      */
-    public function isOldestApprovable(): bool
+    public function runValidatorCallback(): mixed
     {
-        # IS APPROVABLE
-        if (
-            $this->is_approving == false &&
-            !is_null($this->approver_id)
-        )
-            return false;
-
-        # IS OLDEST
-        return !!static::where('id', '<', $this->getKey())
-            ->where(function (Builder $query) {
-                $query->where('is_approving', true)
-                    ->orWhereNull('approver_id');
-            })
-            ->first(['id']);
+        return $this->validatorable->validator->runCallback($this);
     }
 
     /**
@@ -101,10 +95,126 @@ class Validation extends Model
 
     /**
      * Get relationship models
+     * Relation must implements `App\Interfaces\Validatable` interface
      *
      */
     public function validationable(): MorphTo
     {
         return $this->morphTo();
+    }
+
+    /**
+     * get user relationship as approver
+     *
+     */
+    public function approver(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'approver_id');
+    }
+
+    /**
+     * Determine whether the validation is error
+     *
+     */
+    public function isError(): bool
+    {
+        return (bool)$this->is_error;
+    }
+
+    /**
+     * Determine whether the validation is success
+     *
+     */
+    public function isSuccess(): bool
+    {
+        return !$this->is_error
+            && !$this->is_approving
+            && $this->approver_id;
+    }
+
+    /**
+     * Determine whether the validation is approving
+     *
+     */
+    public function isApproving(): bool
+    {
+        return $this->is_approving;
+    }
+
+    /**
+     * Get readable values of validationable
+     *
+     */
+    public function getReadableValues(): array
+    {
+        return $this->validationable->getReadableValues($this);
+    }
+
+    /**
+     * Handle updatable values of validationable
+     *
+     */
+    public function handleUpdatableValues()
+    {
+        return $this->validationable->handleUpdatableValues($this);
+    }
+
+    /**
+     * Touch validationable
+     *
+     */
+    public function touchValidationable()
+    {
+        sleep(1);
+        $this->validationable->touch();
+    }
+
+    /**
+     * create next validation orderly
+     * Run if need continue validate `validationable`
+     */
+    public function next(): ?static
+    {
+        $validationable = $this->validationable;
+        $currentValidatorable = $this->validatorable;
+
+        # Get `validatorables` has same `type`, same parent `validatorable`
+        $validatorables = $currentValidatorable
+            ->parent
+            ->validatorables()
+            ->where('type', $currentValidatorable->type)
+            ->get();
+
+        # Find next `validatorable`
+        $nextValidatorable = null;
+        $hasCurrentValidatorable = false;
+        foreach ($validatorables as $validatorable) {
+            if ($validatorable->getKey() == $currentValidatorable->getKey()) {
+                $hasCurrentValidatorable = true;
+            } elseif ($hasCurrentValidatorable) {
+                $nextValidatorable = $validatorable;
+                break;
+            }
+        }
+
+        # `nextValidation` is created in the past
+        if (
+            static::where('id', '>', $this->getKey())
+            ->whereIn('validatorable_id', $validatorables->pluck('id'))
+            ->where('validationable_id', $this->validationable_id)
+            ->where('validationable_type', $this->validationable_type)
+            ->first(['id'])
+        ) {
+            return null;
+        }
+
+        # Create next `validation`
+        if ($nextValidatorable) {
+            return $validationable->validations()->create([
+                'validatorable_id' => $nextValidatorable->getKey(),
+            ]);
+        }
+
+        return null;
     }
 }
