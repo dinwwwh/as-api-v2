@@ -43,6 +43,35 @@ class AccountTypeController extends Controller
     }
 
     /**
+     * Get usable account types
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function usable()
+    {
+        $usableAccountTypeIds = AccountType::whereRelation('users', 'id', auth()->user()->getKey())
+            ->get(['id'])
+            ->pluck('id')
+            ->toArray();
+
+        if ($search = request('_search')) {
+            $accountTypes = AccountType::search($search);
+        } else {
+            $accountTypes = AccountType::orderBy('id', 'desc');
+        }
+
+        $accountTypes = $accountTypes->whereIn('id', $usableAccountTypeIds);
+
+        if (request('_perPage')) {
+            $accountTypes = $accountTypes->paginate(request('_perPage'));
+        } else {
+            $accountTypes = $accountTypes->get();
+        }
+
+        return AccountTypeResource::withLoad($accountTypes);
+    }
+
+    /**
      * Show the form for creating a new resource.
      *
      * @return \Illuminate\Http\Response

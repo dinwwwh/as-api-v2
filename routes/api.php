@@ -182,6 +182,10 @@ Route::prefix('account-types')->group(function () {
         ->middleware(['auth', 'verified'])
         ->name('accountTypes.getCreatedByMe');
 
+    Route::get('usable', [AccountTypeController::class, 'usable'])
+        ->middleware(['auth', 'verified'])
+        ->name('accountTypes.usable');
+
     Route::prefix('{accountType}')->group(function () {
         Route::get('', [AccountTypeController::class, 'show'])
             ->name('accountTypes.show');

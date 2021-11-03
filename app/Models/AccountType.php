@@ -10,6 +10,7 @@ use App\Traits\ValidatorableParent;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Laravel\Scout\Searchable;
 
 class AccountType extends Model
 {
@@ -19,7 +20,8 @@ class AccountType extends Model
         Taggable,
         Userable,
         Loggable,
-        ValidatorableParent;
+        ValidatorableParent,
+        Searchable;
 
     protected  $touches = [];
     protected  $fillable = [
