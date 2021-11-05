@@ -28,6 +28,10 @@ class AccountController extends Controller
             $accounts = Account::orderBy('id', 'desc');
         }
 
+        if ($creatorId = request('_creatorId')) {
+            $accounts = $accounts->where('creator_id', $creatorId);
+        }
+
         if (request('_perPage')) {
             $accounts = $accounts->paginate(request('_perPage'));
         } else {
