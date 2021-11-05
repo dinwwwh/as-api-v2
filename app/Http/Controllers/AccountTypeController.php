@@ -20,7 +20,19 @@ class AccountTypeController extends Controller
      */
     public function index()
     {
-        //
+        if ($search = request('_search')) {
+            $accountTypes = AccountType::search($search);
+        } else {
+            $accountTypes = AccountType::orderBy('id', 'desc');
+        }
+
+        if ($perPage = request('_perPage')) {
+            $accountTypes = $accountTypes->paginate($perPage);
+        } else {
+            $accountTypes = $accountTypes->get();
+        }
+
+        return AccountTypeResource::withLoad($accountTypes);
     }
 
     /**
