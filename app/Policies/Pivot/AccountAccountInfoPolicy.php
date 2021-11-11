@@ -41,6 +41,13 @@ class AccountAccountInfoPolicy
             && $accountInfo->can_buyer_oke
         ) return true;
 
+        if ($user->can('approve', $account)) return true;
+
+        if (
+            $user->getKey() == $account->creator_id
+            && $account->refunded_at
+        ) return true;
+
         return false;
     }
 }

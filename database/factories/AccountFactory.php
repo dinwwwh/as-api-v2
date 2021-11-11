@@ -4,6 +4,7 @@ namespace Database\Factories;
 
 use App\Models\Account;
 use App\Models\AccountType;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class AccountFactory extends Factory
@@ -29,5 +30,29 @@ class AccountFactory extends Factory
             'tax' => rand(1000, 9999),
             'account_type_id' => AccountType::factory(),
         ];
+    }
+
+    /**
+     * State model to buying status.
+     *
+     */
+    public function buying()
+    {
+        return $this->state([
+            'confirmed_at' => now()->addHour(),
+            'buyer_id' => User::factory(),
+            'bought_at' => now(),
+        ]);
+    }
+
+    /**
+     * State model to approvable status.
+     *
+     */
+    public function approvable()
+    {
+        return $this->buying()->state([
+            'confirmed_at' => null,
+        ]);
     }
 }

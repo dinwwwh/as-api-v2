@@ -56,6 +56,7 @@ class AccountResource extends JsonResource
                 fn () => [
                     'canUpdate' => auth()->user()->can('update', $this->resource),
                     'canBuy' => auth()->user()->can('buy', $this->resource),
+                    'canApprove' => auth()->user()->can('approve', $this->resource),
                 ],
             ),
         ]);

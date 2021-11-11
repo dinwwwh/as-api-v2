@@ -44,6 +44,7 @@ class Account extends Model implements Validatable
         'buyer_id',
         'confirmed_at',
         'paid_at',
+        'refunded_at',
         'status' // computed property
     ];
     protected  $hidden = ['cost'];
@@ -78,6 +79,7 @@ class Account extends Model implements Validatable
                 return $builder->where('is_error', true);
             })
             ->first()
+            || ($this->bought_at && $this->refunded_at)
         )
             return static::ERROR_STATUS;
 

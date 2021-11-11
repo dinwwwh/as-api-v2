@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\Account\ApproveRequest;
 use App\Http\Requests\Account\ConfirmRequest;
 use App\Http\Requests\Account\CreateRequest;
 use App\Http\Requests\Account\UpdateRequest;
@@ -11,6 +12,7 @@ use App\Models\AccountType;
 use App\Models\Validatorable;
 use DB;
 use Illuminate\Http\Request;
+use Laravel\Scout\Builder;
 use Storage;
 
 class AccountController extends Controller
@@ -22,14 +24,25 @@ class AccountController extends Controller
      */
     public function index()
     {
-        if (request('_search')) {
-            $accounts = Account::search();
+        if ($search = request('_search')) {
+            $accounts = Account::search($search);
         } else {
             $accounts = Account::orderBy('id', 'desc');
         }
 
         if ($creatorId = request('_creatorId')) {
             $accounts = $accounts->where('creator_id', $creatorId);
+        }
+
+        if (!($accounts instanceof Builder) && request('_confirmedErrorAndApprovableByMe') && auth()->check()) {
+            $accountTypeIdsCreatedByMe = AccountType::where('creator_id', auth()->user()->getKey())
+                ->get(['id'])
+                ->pluck('id')
+                ->toArray();
+            $accounts = $accounts->whereIn('account_type_id', $accountTypeIdsCreatedByMe)
+                ->where('confirmed_at', null)
+                ->where('bought_at', '!=', null)
+                ->where('refunded_at', null);
         }
 
         if (request('_perPage')) {
@@ -187,6 +200,35 @@ class AccountController extends Controller
                 ]);
 
                 if ($request->oke) $account->log('xác nhận là tài khoản đúng thông tin');
+            }
+
+            DB::commit();
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            throw $th;
+        }
+
+        return AccountResource::withLoad($account);
+    }
+
+    /**
+     * Approve confirmed error account
+     *
+     */
+    public function approve(ApproveRequest $request, Account $account)
+    {
+        try {
+            DB::beginTransaction();
+
+            if ($request->isRefunded) {
+                $account->buyer->updateBalance($account->bought_at_price, 'hoàn trả tiền tài khoản #' . $account->getKey());
+                $account->update([
+                    'refunded_at' => now(),
+                ]);
+            } else {
+                $account->update([
+                    'confirmed_at' => now(),
+                ]);
             }
 
             DB::commit();

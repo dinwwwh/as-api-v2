@@ -72,14 +72,32 @@ class AccountPolicy
     }
 
     /**
+     * Determine whether the user can approve confirmed error account.
+     *
+     */
+    public function approve(User $user, Account $account)
+    {
+        if (is_null($account->bought_at)) {
+            return false;
+        }
+
+        if ($account->confirmed_at || $account->refunded_at) {
+            return false;
+        }
+
+        return $user->getKey() == $account->accountType->creator_id ||
+            $user->can('manage', $account->accountType::class);
+    }
+
+    /**
      * Determine whether the user can update the model.
      *
      * @return \Illuminate\Auth\Access\Response|bool
      */
     public function update(User $user, Account $account)
     {
-        return $account->isSelling()
-            && $account->creator_id == $user->getKey();
+        return ($account->isSelling() && $account->creator_id == $user->getKey())
+            || $this->approve($user, $account);
     }
 
     /**

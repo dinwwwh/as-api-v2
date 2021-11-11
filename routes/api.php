@@ -263,6 +263,9 @@ Route::prefix('accounts')->group(function () {
         Route::patch('confirm', [AccountController::class, 'confirm'])
             ->middleware(['auth', 'verified', 'can:confirm,account'])
             ->name('accounts.confirm');
+        Route::patch('approve', [AccountController::class, 'approve'])
+            ->middleware(['auth', 'verified', 'can:approve,account'])
+            ->name('accounts.approve');
     });
 });
 
