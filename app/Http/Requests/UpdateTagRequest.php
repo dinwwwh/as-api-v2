@@ -51,6 +51,7 @@ class UpdateTagRequest extends FormRequest
                 Rule::unique('tags', 'slug')
                     ->ignore($this->route('tag')->getKey(), 'slug')
             ],
+            'mainImage' => ['image'],
 
             'parent' => ['nullable', 'array'],
             'parent.slug' => ['required_unless:parent,null', 'string', 'different:oldSlug', 'exists:tags,slug']

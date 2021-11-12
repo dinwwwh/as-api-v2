@@ -3,6 +3,8 @@
 namespace Tests\Unit\Tag;
 
 use App\Models\Tag;
+use Illuminate\Http\UploadedFile;
+use Storage;
 use Str;
 use Tests\TestCase;
 
@@ -59,5 +61,30 @@ class ModelTest extends TestCase
             'parent_slug' => $tag->getKey(),
         ]);
         $this->assertEquals(null, $tag->getRepresentation());
+    }
+
+    public function test_auto_delete_main_image()
+    {
+        Storage::fake('public');
+
+        $image1 = UploadedFile::fake()->image('image1.jpg');
+        $image2 = UploadedFile::fake()->image('image2.jpg');
+
+        $tag = Tag::factory()->state([
+            'main_image_path' => $image1->store('tag-images', 'public'),
+        ])->create();
+
+        Storage::disk('public')->assertExists('tag-images/' . $image1->hashName());
+
+        $tag->update([
+            'main_image_path' => $image2->store('tag-images', 'public'),
+        ]);
+
+        Storage::disk('public')->assertMissing('tag-images/' . $image1->hashName());
+        Storage::disk('public')->assertExists('tag-images/' . $image2->hashName());
+
+        $tag->delete();
+
+        Storage::disk('public')->assertMissing('tag-images/' . $image2->hashName());
     }
 }

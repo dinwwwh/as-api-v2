@@ -55,7 +55,8 @@ class AppServiceProvider extends ServiceProvider
             return $snakeArr;
         });
 
-        Storage::macro('urlSmartly', function (string $url): string {
+        Storage::macro('urlSmartly', function (?string $url): ?string {
+            if (empty($url)) return null;
             if (Str::startsWith($url, ['https://', 'http://'])) return $url;
             return config('app.url') . $this->url($url);
         });

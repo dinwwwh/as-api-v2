@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Laravel\Scout\Searchable;
+use Storage;
 use Str;
 
 class Tag extends Model
@@ -24,7 +25,13 @@ class Tag extends Model
     public  $incrementing = false;
 
     protected  $touches = [];
-    protected  $fillable = ['name', 'description', 'type', 'parent_slug'];
+    protected  $fillable = [
+        'name',
+        'description',
+        'type',
+        'parent_slug',
+        'main_image_path'
+    ];
     protected  $hidden = [];
     protected  $casts = [];
     protected  $with = [];
@@ -41,6 +48,13 @@ class Tag extends Model
         });
         static::updating(function (self $tag) {
             $tag->slug = Str::slug($tag->name);
+
+            if ($tag->isDirty('main_image_path')) {
+                Storage::disk('public')->delete($tag->getOriginal('main_image_path'));
+            }
+        });
+        static::deleting(function (self $tag) {
+            Storage::disk('public')->delete($tag->getOriginal('main_image_path'));
         });
     }
 

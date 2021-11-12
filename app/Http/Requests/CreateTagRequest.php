@@ -42,6 +42,7 @@ class CreateTagRequest extends FormRequest
             'slug' => ['unique:tags,slug'],
             'description' => ['nullable', 'string'],
             'type' => ['nullable', Rule::in([Tag::PROPERTY_TYPE, Tag::CATEGORY_TYPE])],
+            'mainImage' => ['image'],
 
             'parent' => ['nullable', 'array'],
             'parent.slug' => ['required_unless:parent,null', 'string', 'exists:tags,slug'],

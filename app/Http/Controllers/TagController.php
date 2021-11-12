@@ -83,6 +83,9 @@ class TagController extends Controller
                 'parent_slug' => $request->parent
                     ? Tag::find($request->parent['slug'])?->getRepresentation()?->getKey()
                     : null,
+                'main_image_path' => $request->hasFile('mainImage')
+                    ? $request->mainImage->store('tag-images', 'public')
+                    : null,
             ]);
 
             DB::commit();
@@ -114,14 +117,20 @@ class TagController extends Controller
         try {
             DB::beginTransaction();
 
+            $data = $request->only('name', 'type', 'description');
+
             if (
                 $request->parent &&
                 $parentTag = Tag::find($request->parent['slug'])?->getRepresentation()
             ) {
-                $tag->update(['parent_slug' => $parentTag->getKey()]);
+                $data['parent_slug'] = $parentTag->getKey();
             }
 
-            $tag->update($request->only('name', 'type', 'description'));
+            if ($request->hasFile('mainImage')) {
+                $data['main_image_path'] = $request->mainImage->store('tag-images', 'public');
+            }
+
+            $tag->update($data);
 
             DB::commit();
         } catch (\Throwable $th) {

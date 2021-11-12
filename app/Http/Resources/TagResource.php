@@ -4,6 +4,7 @@ namespace App\Http\Resources;
 
 use App\Traits\WithLoad;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Storage;
 
 class TagResource extends JsonResource
 {
@@ -18,6 +19,13 @@ class TagResource extends JsonResource
     public function toArray($request)
     {
         return array_merge(parent::toArray($request), [
+
+            $this->mergeWhen(
+                request('_computed'),
+                fn () => [
+                    'mainImageUrl' => Storage::urlSmartly($this->main_image_path),
+                ],
+            ),
 
             $this->mergeWhen(
                 auth()->check() && request('_abilities'),
