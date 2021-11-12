@@ -146,17 +146,18 @@ class AccountAccountInfoResourceTest extends TestCase
             );
     }
 
-    public function test_bought_not_oke_account_case()
+    public function test_bought_not_oke_and_confirmed_account_case()
     {
-        $buyer = $this->factoryUser();
-        $creator = $this->factoryUser(inverse: true);
-        $user = $this->factoryUser(inverse: true);
+        $buyer = $this->factoryUser(['manage_account_type'], true);
+        $creator = $this->factoryUser();
+        $user = $this->factoryUser(['manage_account_type'], inverse: true);
         $account = Account::factory()
             ->state([
                 'bought_at' => now()->subMinute(),
                 'confirmed_at' => null,
                 'buyer_id' => $buyer->getKey(),
                 'creator_id' => $creator->getKey(),
+                'refunded_at' => now(),
             ])
             ->hasAttached(AccountInfo::factory(), [
                 'value' => 'thisIsPivotValue',
@@ -168,18 +169,59 @@ class AccountAccountInfoResourceTest extends TestCase
             '_relationships' => ['infos']
         ];
 
-        $this->actingAs($creator)
+        $this->actingAs($user)
             ->json('get', $router, $data)
             ->assertJson(
                 fn (AssertableJson $json) => $json
                     ->where('data.infos.0.pivot.value', null)
             );
 
-        $this->actingAs($user)
+        $this->actingAs($creator)
+            ->json('get', $router, $data)
+            ->assertJson(
+                fn (AssertableJson $json) => $json
+                    ->where('data.infos.0.pivot.value', 'thisIsPivotValue')
+            );
+
+        $this->actingAs($buyer)
             ->json('get', $router, $data)
             ->assertJson(
                 fn (AssertableJson $json) => $json
                     ->where('data.infos.0.pivot.value', null)
+            );
+    }
+
+    public function test_approvable_account_case()
+    {
+        $buyer = $this->factoryUser();
+        $creator = $this->factoryUser(['manage_account_type'], inverse: true);
+        $approver = $this->factoryUser();
+        $account = Account::factory()
+            ->state([
+                'bought_at' => now()->subMinute(),
+                'confirmed_at' => null,
+                'buyer_id' => $buyer->getKey(),
+                'creator_id' => $creator->getKey(),
+                'refunded_at' => null,
+            ])
+            ->hasAttached(AccountInfo::factory(), [
+                'value' => 'thisIsPivotValue',
+            ], 'infos')
+            ->create();
+        $account->accountType->update([
+            'creator_id' => $approver->getKey(),
+        ]);
+        $router = route('accounts.show', ['account' => $account]);
+        $data = [
+            '_sensitive' => true,
+            '_relationships' => ['infos']
+        ];
+
+        $this->actingAs($approver)
+            ->json('get', $router, $data)
+            ->assertJson(
+                fn (AssertableJson $json) => $json
+                    ->where('data.infos.0.pivot.value', 'thisIsPivotValue')
             );
 
         $this->actingAs($creator)
