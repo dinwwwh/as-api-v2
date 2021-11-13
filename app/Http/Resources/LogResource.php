@@ -19,7 +19,7 @@ class LogResource extends JsonResource
     {
         return array_merge(parent::toArray($request), [
             'loggable' => $this->when(
-                $this->whenLoaded('loggable'),
+                !$this->whenLoaded('loggable')->isMissing(),
                 function () {
                     switch (true) {
                             // case $this->loggable instanceof ABC:

@@ -23,7 +23,7 @@ class FileResource extends JsonResource
             'updater' => new UserResource($this->whenLoaded('updater')),
 
             'filable' => $this->when(
-                $this->whenLoaded('filable'),
+                !$this->whenLoaded('filable')->isMissing(),
                 function () {
                     switch (true) {
                             // case $this->loggable instanceof ABC:
