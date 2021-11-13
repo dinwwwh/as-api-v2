@@ -4,6 +4,7 @@ use App\Http\Controllers\AccountController;
 use App\Http\Controllers\AccountInfoController;
 use App\Http\Controllers\AccountTypeController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CommentController;
 use App\Http\Controllers\RechargedCardController;
 use App\Http\Controllers\SettingController;
 use App\Http\Controllers\TagController;
@@ -320,4 +321,16 @@ Route::prefix('validations')->group(function () {
             ->middleware(['auth', 'verified', 'can:endApproving,validation'])
             ->name('validations.endApproving');
     });
+});
+
+// ====================================================
+// Comment routes
+// ====================================================
+Route::prefix('comments')->group(function () {
+    Route::get('', [CommentController::class, 'index'])
+        ->name('comments.index');
+
+    Route::post('', [CommentController::class, 'create'])
+        ->middleware(['auth', 'verified'])
+        ->name('comments.create');
 });

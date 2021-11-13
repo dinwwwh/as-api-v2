@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Interfaces\Validatable;
 use App\Models\Pivot\AccountAccountInfo;
+use App\Traits\Commentable;
 use App\Traits\CreatorAndUpdater;
 use App\Traits\Filable;
 use App\Traits\Loggable;
@@ -25,7 +26,8 @@ class Account extends Model implements Validatable
         Taggable,
         Searchable,
         Filable,
-        Validationable;
+        Validationable,
+        Commentable;
 
     public const CHECKING_STATUS = 1;
     public const SELLING_STATUS = 2;
