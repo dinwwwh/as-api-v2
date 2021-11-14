@@ -34,15 +34,23 @@ class AccountController extends Controller
             $accounts = $accounts->where('creator_id', $creatorId);
         }
 
-        if (!($accounts instanceof Builder) && request('_confirmedErrorAndApprovableByMe') && auth()->check()) {
+        if (request('_confirmedErrorAndApprovableByMe') && auth()->check()) {
             $accountTypeIdsCreatedByMe = AccountType::where('creator_id', auth()->user()->getKey())
                 ->get(['id'])
                 ->pluck('id')
                 ->toArray();
-            $accounts = $accounts->whereIn('account_type_id', $accountTypeIdsCreatedByMe)
-                ->where('confirmed_at', null)
-                ->where('bought_at', '!=', null)
-                ->where('refunded_at', null);
+
+            if ($accounts instanceof Builder) {
+                $accounts = $accounts->whereIn('account_type_id', $accountTypeIdsCreatedByMe)
+                    ->with([
+                        'filters' => '_tags:confirmed_at_is_null AND NOT _tags:bought_at_is_null AND _tags:refunded_at_is_null',
+                    ]);
+            } else {
+                $accounts = $accounts->whereIn('account_type_id', $accountTypeIdsCreatedByMe)
+                    ->where('confirmed_at', null)
+                    ->where('bought_at', '!=', null)
+                    ->where('refunded_at', null);
+            }
         }
 
         if (request('_perPage')) {
