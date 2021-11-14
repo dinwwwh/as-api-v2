@@ -33,5 +33,14 @@ class SettingSeeder extends Seeder
             'public' => true,
             'rules' => ['string'],
         ]);
+
+        Setting::firstOrCreate(['key' => 'fb_plugin_chat_id'], [
+            'description' => 'ID trang facebook sử dụng cho bong bóng chát.',
+            'assigned_config_key' => null,
+            'value' => 104330967725856,
+            'structure_description' => 'integer',
+            'public' => true,
+            'rules' => ['integer'],
+        ]);
     }
 }
