@@ -24,8 +24,8 @@ class CommentController extends Controller
         }
 
         if (
-            $commentableId =  $request->commentableId
-            && $commentableType =  $request->commentableType
+            $commentableId =  $request->_commentableId
+            && $commentableType =  $request->_commentableType
         ) {
             $comments->where('commentable_id', $commentableId)
                 ->where('commentable_type', $commentableType);
