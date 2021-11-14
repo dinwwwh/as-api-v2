@@ -55,6 +55,11 @@ class AppServiceProvider extends ServiceProvider
             return $snakeArr;
         });
 
+        // Filter where items have value is null
+        Arr::macro('whereNull', function (array $arr): array {
+            return array_filter($arr, fn ($v) => is_null($v));
+        });
+
         Storage::macro('urlSmartly', function (?string $url): ?string {
             if (empty($url)) return null;
             if (Str::startsWith($url, ['https://', 'http://'])) return $url;

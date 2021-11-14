@@ -8,6 +8,7 @@ use App\Traits\Commentable;
 use App\Traits\CreatorAndUpdater;
 use App\Traits\Filable;
 use App\Traits\Loggable;
+use App\Traits\Searchable;
 use App\Traits\Taggable;
 use App\Traits\Validationable;
 use Exception;
@@ -16,7 +17,6 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Laravel\Scout\Searchable;
 
 class Account extends Model implements Validatable
 {
@@ -57,6 +57,8 @@ class Account extends Model implements Validatable
     ];
     protected  $with = ['accountType'];
     protected  $withCount = [];
+
+    public array $searchableRelations = ['tags'];
 
     protected static function booted()
     {
@@ -141,16 +143,6 @@ class Account extends Model implements Validatable
         return $this->status == static::BOUGHT_STATUS
             && $this->confirmed_at
             && $this->confirmed_at->lte(now());
-    }
-
-    /**
-     * Get data use for search `laravel-scout`
-     *
-     */
-    public function toSearchableArray(): array
-    {
-        $this->loadMissing('tags');
-        return $this->toArray();
     }
 
     /**

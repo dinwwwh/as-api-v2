@@ -3,10 +3,10 @@
 namespace App\Models;
 
 use App\Traits\CreatorAndUpdater;
+use App\Traits\Searchable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
-use Laravel\Scout\Searchable;
 
 class Comment extends Model
 {

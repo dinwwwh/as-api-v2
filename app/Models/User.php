@@ -6,16 +6,15 @@ use App\Traits\CreatorAndUpdater;
 use App\Traits\Loggable;
 use App\Traits\Permissible;
 use App\Traits\Rolable;
+use App\Traits\Searchable;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
-use Laravel\Scout\Searchable;
 
 class User extends Authenticatable
 {

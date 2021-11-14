@@ -3,19 +3,21 @@
 namespace App\Models;
 
 use App\Traits\CreatorAndUpdater;
+use App\Traits\Searchable;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
-use Laravel\Scout\Searchable;
 use Storage;
 use Str;
 
 class Tag extends Model
 {
-    use HasFactory, CreatorAndUpdater, Searchable;
+    use HasFactory,
+        CreatorAndUpdater,
+        Searchable;
 
     public const CATEGORY_TYPE = 1;
     public const PROPERTY_TYPE = null;

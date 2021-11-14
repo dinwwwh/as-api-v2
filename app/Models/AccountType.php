@@ -4,13 +4,13 @@ namespace App\Models;
 
 use App\Traits\CreatorAndUpdater;
 use App\Traits\Loggable;
+use App\Traits\Searchable;
 use App\Traits\Taggable;
 use App\Traits\Userable;
 use App\Traits\ValidatorableParent;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Laravel\Scout\Searchable;
 
 class AccountType extends Model
 {
@@ -32,6 +32,8 @@ class AccountType extends Model
     protected  $casts = [];
     protected  $with = [];
     protected  $withCount = [];
+
+    public array $searchableRelations = ['tags'];
 
     /**
      * Get accounts of this model
