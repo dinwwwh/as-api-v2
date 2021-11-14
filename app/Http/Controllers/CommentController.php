@@ -20,7 +20,7 @@ class CommentController extends Controller
         if ($search = $request->_search) {
             $comments = Comment::search($search);
         } else {
-            $comments = Comment::orderBy('id', 'DESC');
+            $comments = Comment::orderBy('id', $request->input('_orderBy', 'DESC'));
         }
 
         if ($request->_commentableId && $request->_commentableType) {

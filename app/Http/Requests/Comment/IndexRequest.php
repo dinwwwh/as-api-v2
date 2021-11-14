@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Comment;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class IndexRequest extends FormRequest
 {
@@ -26,6 +27,7 @@ class IndexRequest extends FormRequest
         return [
             '_commentableType' => ['required_with:_commentableId', 'string'],
             '_commentableId' => ['required_with:_commentableType', 'integer'],
+            '_orderBy' => ['string', Rule::in(['DESC', 'desc', 'ASC', 'asc'])],
         ];
     }
 }
