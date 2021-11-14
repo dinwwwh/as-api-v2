@@ -23,12 +23,9 @@ class CommentController extends Controller
             $comments = Comment::orderBy('id', 'DESC');
         }
 
-        if (
-            $commentableId =  $request->_commentableId
-            && $commentableType =  $request->_commentableType
-        ) {
-            $comments->where('commentable_id', $commentableId)
-                ->where('commentable_type', $commentableType);
+        if ($request->_commentableId && $request->_commentableType) {
+            $comments = $comments->where('commentable_id', $request->_commentableId)
+                ->where('commentable_type', $request->_commentableType);
         }
 
         if ($perPage = $request->_perPage) {
