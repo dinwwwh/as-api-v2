@@ -68,7 +68,7 @@ class AccountPolicy
      */
     public function confirm(User $user, Account $account)
     {
-        return $user->getKey() == $account->buyer_id;
+        return  $account->isBought() && $user->getKey() == $account->buyer_id;
     }
 
     /**
