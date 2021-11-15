@@ -42,5 +42,14 @@ class SettingSeeder extends Seeder
             'public' => true,
             'rules' => ['integer'],
         ]);
+
+        Setting::firstOrCreate(['key' => 'facebook_url'], [
+            'description' => 'Đường dẫn đến facebook của chủ website.',
+            'assigned_config_key' => null,
+            'value' => 'https://facebook.com/dinhdjj',
+            'structure_description' => 'string',
+            'public' => true,
+            'rules' => ['string'],
+        ]);
     }
 }
