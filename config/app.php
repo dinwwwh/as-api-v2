@@ -177,7 +177,7 @@ return [
         App\Providers\TelescopeServiceProvider::class,
         App\Providers\DropboxServiceProvider::class,
         App\Providers\SettingProvider::class,
-
+        App\Providers\SwooleServiceProvider::class,
     ],
 
     /*
