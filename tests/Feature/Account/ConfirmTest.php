@@ -70,7 +70,7 @@ class ConfirmTest extends TestCase
 
         $this->actingAs($user)
             ->json('patch', $router, $data)
-            ->assertStatus(200);
+            ->assertStatus(403);
 
         $this->assertEquals($confirmedAt, $account->refresh()->confirmed_at);
     }
