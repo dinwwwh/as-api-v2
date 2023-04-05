@@ -14,7 +14,7 @@ class CreateRolesTable extends Migration
     public function up()
     {
         Schema::create('roles', function (Blueprint $table) {
-            $table->uuid('key')->primary();
+            $table->string('key', 36)->primary();
             $table->string('name');
             $table->string('description');
             $table->string('color'); // Use for front-end decorate for main color
@@ -25,24 +25,31 @@ class CreateRolesTable extends Migration
         });
 
         Schema::create('permission_role', function (Blueprint $table) {
-            $table->foreignUuid('role_key')
-                ->constrained('roles', 'key')
-                ->onUpdate('cascade')
-                ->onDelete('cascade');
-            $table->foreignUuid('permission_key')
-                ->constrained('permissions', 'key')
-                ->onUpdate('cascade')
-                ->onDelete('cascade');
+            $table->string('role_key', 36);
+            $table->foreign('role_key')
+                ->references('key')
+                ->on('roles')
+                ->onDelete('cascade')
+                ->onUpdate('cascade');
+
+            $table->string('permission_key', 36);
+            $table->foreign('permission_key')
+                ->references('key')
+                ->on('permissions')
+                ->onDelete('cascade')
+                ->onUpdate('cascade');
             $table->timestamps();
 
             $table->primary(['role_key', 'permission_key']);
         });
 
         Schema::create('rolables', function (Blueprint $table) {
-            $table->foreignUuid('role_key')
-                ->constrained('roles', 'key')
-                ->onUpdate('cascade')
-                ->onDelete('cascade');
+            $table->string('role_key', 36);
+            $table->foreign('role_key')
+                ->references('key')
+                ->on('roles')
+                ->onDelete('cascade')
+                ->onUpdate('cascade');
             $table->morphs('rolable');
             $table->timestamps();
 

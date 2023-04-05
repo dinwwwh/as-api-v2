@@ -14,7 +14,7 @@ class CreateTagsTable extends Migration
     public function up()
     {
         Schema::create('tags', function (Blueprint $table) {
-            $table->uuid('slug')->primary();
+            $table->string('slug', 36)->primary();
             $table->string('name', 36);
             $table->string('description')->nullable();
             $table->unsignedInteger('type')->nullable();
@@ -25,18 +25,21 @@ class CreateTagsTable extends Migration
         });
 
         Schema::table('tags',  function (Blueprint $table) {
-            $table->foreignUuid('parent_slug')
-                ->nullable()
-                ->constrained('tags', 'slug')
-                ->onUpdate('cascade')
-                ->onDelete('set null');
+            $table->string('parent_slug', 36)->nullable();
+            $table->foreign('parent_slug')
+                ->references('slug')
+                ->on('tags')
+                ->onDelete('cascade')
+                ->onUpdate('set null');
         });
 
         Schema::create('taggables', function (Blueprint $table) {
-            $table->foreignUuid('tag_slug')
-                ->constrained('tags', 'slug')
-                ->onUpdate('cascade')
-                ->onDelete('cascade');
+            $table->string('tag_slug', 36);
+            $table->foreign('tag_slug')
+                ->references('slug')
+                ->on('tags')
+                ->onDelete('cascade')
+                ->onUpdate('cascade');
             $table->morphs('taggable');
             $table->timestamps();
 

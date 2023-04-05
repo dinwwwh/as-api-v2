@@ -14,7 +14,7 @@ class CreatePermissionsTable extends Migration
     public function up()
     {
         Schema::create('permissions', function (Blueprint $table) {
-            $table->uuid('key')->primary();
+            $table->string('key', 36)->primary();
             $table->string('name');
             $table->string('description');
 
@@ -24,10 +24,12 @@ class CreatePermissionsTable extends Migration
         });
 
         Schema::create('permissibles', function (Blueprint $table) {
-            $table->foreignUuid('permission_key')
-                ->constrained('permissions', 'key')
-                ->onUpdate('cascade')
-                ->onDelete('cascade');
+            $table->string('permission_key', 36);
+            $table->foreign('permission_key')
+                ->references('key')
+                ->on('permissions')
+                ->onDelete('cascade')
+                ->onUpdate('cascade');
             $table->morphs('permissible');
             $table->timestamps();
 

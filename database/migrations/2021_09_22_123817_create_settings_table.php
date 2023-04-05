@@ -14,7 +14,7 @@ class CreateSettingsTable extends Migration
     public function up()
     {
         Schema::create('settings', function (Blueprint $table) {
-            $table->uuid('key')->primary();
+            $table->string('key', 36)->primary();
             $table->json('value')->nullable();
             $table->string('assigned_config_key')->nullable(); // null => this setting not assign to any configs
 

@@ -14,7 +14,7 @@ class CreateRulesTable extends Migration
     public function up()
     {
         Schema::create('rules', function (Blueprint $table) {
-            $table->uuid('key')->primary();
+            $table->string('key', 36)->primary();
             $table->string('name');
             $table->string('description');
 
@@ -24,10 +24,12 @@ class CreateRulesTable extends Migration
         });
 
         Schema::create('rulables', function (Blueprint $table) {
-            $table->foreignUuid('rule_key')
-                ->constrained('rules', 'key')
-                ->onUpdate('cascade')
-                ->onDelete('cascade');
+            $table->string('rule_key', 36);
+            $table->foreign('rule_key')
+                ->references('key')
+                ->on('rules')
+                ->onDelete('cascade')
+                ->onUpdate('cascade');
             $table->morphs('rulable');
             $table->timestamps();
 
