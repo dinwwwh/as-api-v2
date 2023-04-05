@@ -27,8 +27,8 @@ class SwooleServiceProvider extends ServiceProvider
     public function boot()
     {
         // Auto run schedule:run artisan command every minute
-        Octane::tick('schedule-run', function () {
-            Artisan::call('schedule:run');
-        })->seconds(60);
+        // Octane::tick('schedule-run', function () {
+        //     Artisan::call('schedule:run');
+        // })->seconds(60);
     }
 }

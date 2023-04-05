@@ -1,0 +1,9 @@
+[phases.setup]
+nixPkgs = ["...", "php80Extensions.swoole"]
+
+[phases.build]
+cmds = ["...", "php artisan optimize && php artisan migrate --seed --force"]
+
+[start]
+nixPkgs = ["...", "php80Extensions.swoole"]
+cmd = "php artisan octane:start --host=0.0.0.0 --port=$PORT"

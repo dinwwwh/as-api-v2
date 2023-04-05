@@ -1,0 +1,5 @@
+[build]
+builder = "nixpacks"
+
+[environments.demo.deploy]
+buildCommand = "php artisan optimize && php artisan migrate:fresh --seed --force"
