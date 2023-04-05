@@ -33,6 +33,11 @@ class AppServiceProvider extends ServiceProvider
     {
         Model::preventLazyLoading(!app()->isProduction());
 
+        // if production
+        if (\App::environment('production')) {
+            \URL::forceScheme('https');
+        }
+
         // Helper to convert keys of array to 'camelCase'
         Arr::macro('camel', function (array $arr, int $depth = 1): array {
             if ($depth == 0) return $arr;
