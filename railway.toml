@@ -7,5 +7,5 @@ healthcheckTimeout = 300
 restartPolicyType = "on_failure"
 restartPolicyMaxRetries = 3
 
-[environments.demo.deploy]
+[environments.demo.build]
 buildCommand = "php artisan storage:link && php artisan optimize && php artisan migrate:fresh --seed --force"
