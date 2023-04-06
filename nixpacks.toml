@@ -1,0 +1,7 @@
+[phases.build]
+cmds = [
+    "...",
+    "php artisan optimize",
+    "php artisan storage:link",
+    "php artisan migrate --seed --force",
+]
