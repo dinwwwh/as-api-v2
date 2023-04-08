@@ -1,7 +1,7 @@
 [phases.build]
 cmds = [
     "...",
-    "php artisan migrate --seed --force",
+    "php artisan migrate:fresh --seed --force",
     "php artisan config:cache",
     "php artisan cache:clear",
     "php artisan event:cache",

@@ -1,11 +1,13 @@
 [build]
 builder = "nixpacks"
+nixpacksConfigPath = "nixpacks.toml"
+
+[environments.demo.build]
+builder = "nixpacks"
+nixpacksConfigPath = "nixpacks.demo.toml"
 
 [deploy]
 healthcheckPath = "/health"
 healthcheckTimeout = 300
 restartPolicyType = "on_failure"
 restartPolicyMaxRetries = 3
-
-[environments.demo.build]
-buildCommand = "php artisan storage:link && php artisan optimize && php artisan migrate:fresh --seed --force"
