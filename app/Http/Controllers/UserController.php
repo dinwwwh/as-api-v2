@@ -39,7 +39,7 @@ class UserController extends Controller
      */
     public function findStrictly(Request $request)
     {
-        $user = User::where('id', $request->_search)
+        $user = User::where('id', is_numeric($request->_search) ? $request->_search : 0)
             ->orWhere('email', $request->_search)
             ->orWhere('login', $request->_search)
             ->first();

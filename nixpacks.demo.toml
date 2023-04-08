@@ -2,6 +2,7 @@
 cmds = [
     "...",
     "php artisan migrate:fresh --seed --force",
+    "php artisan db:seed --class='Database\\Seeders\\DemoSeeder' --force",
     "php artisan config:cache",
     "php artisan cache:clear",
     "php artisan event:cache",
